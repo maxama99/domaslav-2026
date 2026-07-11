@@ -1,245 +1,316 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pravidla — Hospodská olympiáda</title>
-  <link rel="stylesheet" href="/style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>" />
-</head>
-<body>
-  <header class="hero">
-    <div class="rings">🥇🍺🥈🍻🥉</div>
-    <h1 id="title">Pravidla &amp; postup</h1>
-    <p class="subtitle">Hospodská olympiáda</p>
-    <nav class="topnav"><a href="/">🏆 Zpět na žebříček</a></nav>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pravidla — Hospodská olympiáda</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>"
+    />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="rings">🥇🍺🥈🍻🥉</div>
+      <h1 id="title">Pravidla &amp; postup</h1>
+      <p class="subtitle">Hospodská olympiáda</p>
+      <nav class="topnav"><a href="/">🏆 Zpět na žebříček</a></nav>
+    </header>
 
-  <main class="admin-wrap">
-    <!-- Bodování -->
-    <div class="card">
-      <h2>🎯 Bodování</h2>
-      <p>Olympiády se účastní tři nebo čtyři týmy. Skládá se ze tří částí a každý tým může
-        v každé části získat maximálně <strong>15 bodů</strong>, celkem tedy nejvýše
-        <strong>45 bodů</strong>.</p>
-      <div class="rules-parts">
-        <div class="part"><span class="pill">max 15 b</span><strong>Hospodský pětiboj</strong></div>
-        <div class="part"><span class="pill">max 15 b</span><strong>Tajné mise</strong></div>
-        <div class="part"><span class="pill">max 15 b</span><strong>Pub kvíz</strong></div>
-      </div>
-      <p class="hint" style="text-align:left">Při shodném celkovém výsledku rozhodne dodatečný
-        rozstřel podle rozhodnutí organizátora.</p>
-    </div>
-
-    <!-- Postup -->
-    <div class="card">
-      <h2>🗺️ Průběh akce</h2>
-      <ol class="steps">
-        <li>Na začátku si každý tým <strong>vylosuje dvě kartičky s tajnými misemi</strong>.</li>
-        <li>Během celé akce probíhá <strong>hospodský pětiboj</strong> (pět disciplín) a týmy
-          průběžně plní své tajné mise.</li>
-        <li>Jakmile tým splní alespoň jednu misi, může si vylosovat
-          <strong>třetí, poslední kartičku</strong> (maximálně tři splněné mise).</li>
-        <li>Součástí večera je <strong>online pub kvíz</strong>.</li>
-        <li>Sečtou se body ze všech tří částí a vyhlásí se <strong>vítěz</strong> 🏆.</li>
-      </ol>
-    </div>
-
-    <!-- Pětiboj -->
-    <div class="card">
-      <h2>🍺 Hospodský pětiboj <span class="pill">max 15 b</span></h2>
-      <p>Pět disciplín, každá se vyhodnotí samostatně podle pořadí týmů:</p>
-      <ul class="placing">
-        <li><span class="place">1. místo</span> <strong>3 body</strong></li>
-        <li><span class="place">2. místo</span> <strong>2 body</strong></li>
-        <li><span class="place">3. místo</span> <strong>1 bod</strong></li>
-        <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
-      </ul>
-      <p class="hint" style="text-align:left">Při účasti tří týmů se udělují 3, 2 a 1 bod.
-        Při shodě rozhodne dodatečný rozstřel; není-li možný, získají dotčené týmy průměr bodů
-        za svá umístění (např. shoda na 1.–2. místě = 2,5 bodu).</p>
-
-      <details class="rules-details">
-        <summary>Obecná pravidla pětiboje</summary>
-        <ul>
-          <li>Každý tým před disciplínou určí svého soutěžícího nebo sestavu.</li>
-          <li>Jeden člověk může soutěžit ve více disciplínách.</li>
-          <li>Organizátor u každé disciplíny určí, zda soutěží jeden člen, více členů, nebo celý tým.</li>
-          <li>Při porušení pravidel lze pokus opakovat nebo udělit časovou penalizaci.</li>
-          <li>Úmyslné narušování pokusu jiného týmu = diskvalifikace z dané disciplíny.</li>
-          <li>Alkohol není povinný — pivo lze nahradit nealkoholickým nebo schváleným nápojem.</li>
-          <li>Všechny týmy mají stejné podmínky, objem nápoje i vybavení.</li>
-        </ul>
-      </details>
-
-      <h3 class="sub">Disciplíny</h3>
-
-      <div class="disc-block">
-        <h4>1. Hod pivním táckem</h4>
-        <p>Hoď pivní tácek co nejdále.</p>
-        <details class="rules-details">
-          <summary>Pravidla</summary>
-          <ul>
-            <li>Každý tým vybere jednoho soutěžícího, tři pokusy, počítá se nejdelší platný hod.</li>
-            <li>Hází se stejným táckem z vyznačené čáry; přešlap = neplatný hod.</li>
-            <li>Vzdálenost se měří od čáry k prvnímu dopadu. Vyhrává nejdelší platný hod.</li>
-            <li>Při shodě mají dotčené týmy po jednom dodatečném hodu.</li>
-          </ul>
-        </details>
-      </div>
-
-      <div class="disc-block">
-        <h4>2. Pivní štafeta</h4>
-        <p>Tým co nejrychleji načepuje nápoj, přenese ho přes štafetovou trasu a na konci vypije.</p>
-        <details class="rules-details">
-          <summary>Pravidla</summary>
-          <ul>
-            <li>Soutěží celý tým; první člen načepuje stanovený objem (doporučeno 0,3 l).</li>
-            <li>Nápoj se přenáší v nerozbitném kelímku, každý člen absolvuje jeden úsek.</li>
-            <li>Předání jen na vyznačeném místě, kelímek se nesmí úmyslně vylévat.</li>
-            <li>Poslední člen vypije zbytek; čas se zastaví položením prázdné nádoby.</li>
-            <li>Penalizace: předání mimo prostor +5 s, shození překážky +3 s,
-              zbylý nápoj +10 s, úmyslné vylití = diskvalifikace.</li>
-            <li>Vyhrává nejnižší výsledný čas po penalizacích.</li>
-          </ul>
-        </details>
-      </div>
-
-      <div class="disc-block">
-        <h4>3. Držení tupláku v předpažení</h4>
-        <p>Udrž naplněný tuplák co nejdéle v natažené ruce.</p>
-        <details class="rules-details">
-          <summary>Pravidla</summary>
-          <ul>
-            <li>Jeden soutěžící za tým, stejný tuplák naplněný po vyznačenou hranici.</li>
-            <li>Drží se jednou rukou v předpažení, paže přibližně rovnoběžně se zemí, loket natažený.</li>
-            <li>Druhá ruka nesmí podpírat paži ani tělo.</li>
-            <li>Pokus končí ohnutím lokte, poklesem ruky, přitisknutím k tělu, uchopením druhou rukou
-              nebo upuštěním/nakloněním tupláku.</li>
-            <li>Vyhrává nejdelší čas; při shodě nový pokus druhou rukou.</li>
-          </ul>
-        </details>
-      </div>
-
-      <div class="disc-block">
-        <h4>4. Pití piva brčkem</h4>
-        <p>Vypij stanovený objem nápoje brčkem v co nejkratším čase.</p>
-        <details class="rules-details">
-          <summary>Pravidla</summary>
-          <ul>
-            <li>Jeden soutěžící za tým, stejný nápoj, objem (doporučeno 0,3 l) i typ brčka.</li>
-            <li>Pije se jen brčkem, ruce mimo nádobu, nádoba se nesmí naklánět ani z ní pít přímo.</li>
-            <li>Čas začíná na povel a končí vypitím a zvednutím prázdné nádoby.</li>
-            <li>Vyhrává nejrychlejší platný čas; při shodě rozhodne méně pěny nebo krátký rozstřel.</li>
-          </ul>
-        </details>
-      </div>
-
-      <div class="disc-block">
-        <h4>5. Šipky</h4>
-        <p>Regenerační disciplína — pít pivo není povinné.</p>
-        <details class="rules-details">
-          <summary>Pravidla</summary>
-          <ul>
-            <li>Jeden soutěžící za tým, tři hody ze vzdálenosti tří metrů.</li>
-            <li>Výsledek = součet bodových hodnot tří hodů; přešlap = neplatný hod.</li>
-            <li>Nezapíchnutá šipka = 0 bodů; vypadlá se počítá jen po potvrzení rozhodčím.</li>
-            <li>Vyhrává nejvyšší součet; při shodě rozstřel po jedné šipce, dokud jeden tým nevede.</li>
-          </ul>
-        </details>
-      </div>
-    </div>
-
-    <!-- Tajné mise -->
-    <div class="card">
-      <h2>🕵️ Tajné mise <span class="pill">max 15 b</span></h2>
-      <p>Probíhají průběžně během celé akce. Za každou splněnou misi <strong>5 bodů</strong>,
-        maximálně <strong>3 splněné mise</strong> na tým (0 / 5 / 10 / 15 bodů).</p>
-
-      <details class="rules-details">
-        <summary>Losování a průběh</summary>
-        <ul>
-          <li>Na začátku si tým vylosuje dvě mise a smí mít současně nejvýše dvě aktivní kartičky.</li>
-          <li>Po uznání splněné mise si tým vylosuje jednu novou kartičku (max tři splněné celkem).</li>
-          <li>Po dosažení 15 bodů se už nelosuje. Nesplněnou kartičku nelze bezdůvodně vyměnit —
-            výměnu povolí organizátor jen u objektivně nesplnitelného úkolu.</li>
-        </ul>
-      </details>
-      <details class="rules-details">
-        <summary>Utajení a potvrzení splnění</summary>
-        <ul>
-          <li>Obsah mise smí tým sdílet mezi svými členy, ale nesmí ho před splněním prozradit
-            osobě, která je cílem úkolu. Po dokončení už prozradit lze.</li>
-          <li>Splnění musí schválit organizátor — fotografií, videem, nezávislým svědkem
-            nebo přímým pozorováním.</li>
-        </ul>
-      </details>
-      <details class="rules-details">
-        <summary>Bezpečnost a férovost</summary>
-        <ul>
-          <li>Zakázáno: přilévat cokoli do cizího nápoje, manipulovat s cizím jídlem/pitím,
-            nutit někoho k pití alkoholu, poškozovat věci, používat cizí telefon bez svolení,
-            plnit úkoly při řízení/plavání a jiných rizikových činnostech.</li>
-          <li>Úkoly nesmí být nebezpečné, ponižující ani konfliktní. Každý smí aktivitu odmítnout —
-            tým se pak pokusí úkol splnit s někým jiným.</li>
-        </ul>
-      </details>
-
-      <details class="rules-details spoiler">
-        <summary>⚠️ Kartičky misí (obsahuje spoilery — otevírej jen jako organizátor)</summary>
-        <div class="missions">
-          <div class="mission"><strong>Mise 1 · Slepičí poselství</strong> — přilepte někomu z jiného
-            týmu na záda papírek „Zeptejte se mě, kolik mám doma slepic." Musí tam zůstat ≥ 60 min,
-            nositel si nevšimne, alespoň dva lidé se zeptají.</div>
-          <div class="mission"><strong>Mise 2 · Brčko jako životní styl</strong> — někdo z jiného týmu
-            si dobrovolně dá brčko do piva a přes něj dopije celý zbytek; předem neví, že jde o misi.</div>
-          <div class="mission"><strong>Mise 3 · Taneční mistr</strong> — někdo z jiného týmu dobrovolně
-            před ≥ 4 lidmi předvede taneční figuru a alespoň jeden ji zkusí napodobit.</div>
-          <div class="mission"><strong>Mise 4 · Nečekaný koncert</strong> — někdo spontánně (bez přímé
-            žádosti) zazpívá alespoň část refrénu známé písně a přidají se ≥ 2 další.</div>
-          <div class="mission"><strong>Mise 5 · Nový státní svátek</strong> — vymyslete svátek a vyvolejte
-            přípitek ≥ 8 lidí, kteří současně pozvednou nápoj a zopakují sváteční heslo
-            (např. „Den evropského tupláku – tuplákům zdar!").</div>
-          <div class="mission"><strong>Mise 6 · Pokrývková fotografie</strong> — společná fotka všech
-            přítomných, každý má něco na hlavě, alespoň polovina pokrývek není běžná čepice/klobouk;
-            fotka vznikne pod jinou záminkou.</div>
-          <div class="mission"><strong>Mise 7 · Autorský pivní koktejl</strong> — někdo z jiného týmu si
-            dobrovolně (a s vědomím obsahu) přilije panáka do piva, vymyslí název a představí ho ≥ 3 lidem
-            jako svůj koktejl.</div>
-          <div class="mission"><strong>Mise 8 · Neexistující disciplína</strong> — přesvědčte člověka
-            z jiného týmu, že začíná nová disciplína; absolvuje celý pokus a sám nominuje dalšího.
-            Bezpečné a neponižující.</div>
-          <div class="mission"><strong>Mise 9 · Reklama na gril</strong> — s dvěma lidmi z jiných týmů
-            natočte ≥ 20 s reklamu na gril: originální název, slogan, převratná funkce a společná póza.
-            Ostatní předem nevědí, že jde o misi.</div>
-          <div class="mission"><strong>Mise 10 · Petice za lepší svět</strong> — ≥ 6 podpisů (ze ≥ 2 jiných
-            týmů) pod smyšlenou petici, každý uvede krátký důvod; petice má název a vysvětlení
-            (např. „zákaz kulatých pivních tácků").</div>
+    <main class="admin-wrap">
+      <!-- Bodování -->
+      <div class="card">
+        <h2>🎯 Bodování</h2>
+        <p>
+          Olympiády se účastní tři nebo čtyři týmy. Skládá se ze tří částí a
+          každý tým může v každé části získat maximálně
+          <strong>15 bodů</strong>, celkem tedy nejvýše
+          <strong>45 bodů</strong>.
+        </p>
+        <div class="rules-parts">
+          <div class="part">
+            <span class="pill">max 15 b</span><strong>Hospodský pětiboj</strong>
+          </div>
+          <div class="part">
+            <span class="pill">max 15 b</span><strong>Tajné mise</strong>
+          </div>
+          <div class="part">
+            <span class="pill">max 15 b</span><strong>Pub kvíz</strong>
+          </div>
         </div>
-      </details>
+        <p class="hint" style="text-align: left">
+          Při shodném celkovém výsledku rozhodne dodatečný rozstřel podle
+          rozhodnutí organizátora.
+        </p>
+      </div>
 
-      <p class="hint" style="text-align:left">Na veřejném žebříčku se zobrazuje jen počet splněných
-        misí a body — konkrétní obsah aktivních kartiček zná pouze příslušný tým a organizátor.</p>
-    </div>
+      <!-- Postup -->
+      <div class="card">
+        <h2>🗺️ Průběh akce</h2>
+        <ol class="steps">
+          <li>
+            Na začátku si každý tým
+            <strong>vylosuje dvě kartičky s tajnými misemi</strong>.
+          </li>
+          <li>
+            Během celé akce probíhá <strong>hospodský pětiboj</strong> (pět
+            disciplín) a týmy průběžně plní své tajné mise.
+          </li>
+          <li>
+            Jakmile tým splní alespoň jednu misi, může si vylosovat
+            <strong>třetí, poslední kartičku</strong> (maximálně tři splněné
+            mise).
+          </li>
+          <li>Součástí večera je <strong>online pub kvíz</strong>.</li>
+          <li>
+            Sečtou se body ze všech tří částí a vyhlásí se
+            <strong>vítěz</strong> 🏆.
+          </li>
+        </ol>
+      </div>
 
-    <!-- Pub kvíz -->
-    <div class="card">
-      <h2>🧠 Pub kvíz <span class="pill">max 15 b</span></h2>
-      <p>Kvíz hrajeme <strong>online</strong>: jeden hráč založí hru a vybere sadu otázek, ostatní se
-        připojí do místnosti pomocí kódu. Bez registrace, zdarma, funguje i na mobilech — atmosféra
-        hospodského kvízu kdekoliv. Všechny otázky i odpovědi generuje umělá inteligence.</p>
-      <p>Body se přidělují podle umístění v kvízu:</p>
-      <ul class="placing">
-        <li><span class="place">1. místo</span> <strong>15 bodů</strong></li>
-        <li><span class="place">2. místo</span> <strong>10 bodů</strong></li>
-        <li><span class="place">3. místo</span> <strong>5 bodů</strong></li>
-        <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
-      </ul>
-    </div>
-  </main>
+      <!-- Pětiboj -->
+      <div class="card">
+        <h2>🍺 Hospodský pětiboj <span class="pill">max 15 b</span></h2>
+        <p>Pět disciplín, každá se vyhodnotí samostatně podle pořadí týmů:</p>
+        <ul class="placing">
+          <li><span class="place">1. místo</span> <strong>3 body</strong></li>
+          <li><span class="place">2. místo</span> <strong>2 body</strong></li>
+          <li><span class="place">3. místo</span> <strong>1 bod</strong></li>
+          <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
+        </ul>
+        <p class="hint" style="text-align: left">
+          Při účasti tří týmů se udělují 3, 2 a 1 bod. Při shodě rozhodne
+          dodatečný rozstřel; není-li možný, získají dotčené týmy průměr bodů za
+          svá umístění (např. shoda na 1.–2. místě = 2,5 bodu).
+        </p>
 
-  <footer>
-    <a href="/">Žebříček</a> · <a href="/admin">Admin</a>
-  </footer>
-</body>
+        <details class="rules-details">
+          <summary>Obecná pravidla pětiboje</summary>
+          <ul>
+            <li>
+              Každý tým před disciplínou určí svého soutěžícího nebo sestavu.
+            </li>
+            <li>Jeden člověk může soutěžit ve více disciplínách.</li>
+            <li>
+              Organizátor u každé disciplíny určí, zda soutěží jeden člen, více
+              členů, nebo celý tým.
+            </li>
+            <li>
+              Při porušení pravidel lze pokus opakovat nebo udělit časovou
+              penalizaci.
+            </li>
+            <li>
+              Úmyslné narušování pokusu jiného týmu = diskvalifikace z dané
+              disciplíny.
+            </li>
+            <li>
+              Alkohol není povinný — pivo lze nahradit nealkoholickým nebo
+              schváleným nápojem.
+            </li>
+            <li>Všechny týmy mají stejné podmínky, objem nápoje i vybavení.</li>
+          </ul>
+        </details>
+
+        <h3 class="sub">Disciplíny</h3>
+
+        <div class="disc-block">
+          <h4>1. Hod pivním táckem</h4>
+          <p>Hoď pivní tácek co nejdále.</p>
+          <details class="rules-details">
+            <summary>Pravidla</summary>
+            <ul>
+              <li>
+                Každý tým vybere jednoho soutěžícího, tři pokusy, počítá se
+                nejdelší platný hod.
+              </li>
+              <li>
+                Hází se stejným táckem z vyznačené čáry; přešlap = neplatný hod.
+              </li>
+              <li>
+                Vzdálenost se měří od čáry k prvnímu dopadu. Vyhrává nejdelší
+                platný hod.
+              </li>
+              <li>Při shodě mají dotčené týmy po jednom dodatečném hodu.</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="disc-block">
+          <h4>2. Pivní štafeta</h4>
+          <p>
+            Tým co nejrychleji načepuje nápoj, přenese ho přes štafetovou trasu
+            a na konci vypije.
+          </p>
+          <details class="rules-details">
+            <summary>Pravidla</summary>
+            <ul>
+              <li>Soutěží celý tým; první člen načepuje stanovený objem.</li>
+              <li>
+                Nápoj se přenáší v nerozbitném kelímku, každý člen absolvuje
+                jeden úsek.
+              </li>
+              <li>
+                Předání jen na vyznačeném místě, kelímek se nesmí úmyslně
+                vylévat.
+              </li>
+              <li>
+                Poslední člen vypije zbytek; čas se zastaví položením prázdné
+                nádoby.
+              </li>
+              <li>
+                Penalizace: předání mimo prostor +5 s, shození překážky +3 s,
+                zbylý nápoj +10 s, úmyslné vylití = diskvalifikace.
+              </li>
+              <li>Vyhrává nejnižší výsledný čas po penalizacích.</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="disc-block">
+          <h4>3. Držení tupláku v předpažení</h4>
+          <p>Udrž naplněný tuplák co nejdéle v natažené ruce.</p>
+          <details class="rules-details">
+            <summary>Pravidla</summary>
+            <ul>
+              <li>
+                Jeden soutěžící za tým, stejný tuplák naplněný po vyznačenou
+                hranici.
+              </li>
+              <li>
+                Drží se jednou rukou v předpažení, paže přibližně rovnoběžně se
+                zemí, loket natažený.
+              </li>
+              <li>Druhá ruka nesmí podpírat paži ani tělo.</li>
+              <li>
+                Pokus končí ohnutím lokte, poklesem ruky, přitisknutím k tělu,
+                uchopením druhou rukou nebo upuštěním/nakloněním tupláku.
+              </li>
+              <li>Vyhrává nejdelší čas; při shodě nový pokus druhou rukou.</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="disc-block">
+          <h4>4. Pití piva brčkem</h4>
+          <p>Vypij stanovený objem nápoje brčkem v co nejkratším čase.</p>
+          <details class="rules-details">
+            <summary>Pravidla</summary>
+            <ul>
+              <li>
+                Jeden soutěžící za tým, stejný nápoj, objem (doporučeno 0,3 l) i
+                typ brčka.
+              </li>
+              <li>
+                Pije se jen brčkem, ruce mimo nádobu, nádoba se nesmí naklánět
+                ani z ní pít přímo.
+              </li>
+              <li>
+                Čas začíná na povel a končí vypitím a zvednutím prázdné nádoby.
+              </li>
+              <li>
+                Vyhrává nejrychlejší platný čas; při shodě rozhodne méně pěny
+                nebo krátký rozstřel.
+              </li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="disc-block">
+          <h4>5. Šipky</h4>
+          <p>Regenerační disciplína.</p>
+          <details class="rules-details">
+            <summary>Pravidla</summary>
+            <ul>
+              <li>
+                Jeden soutěžící za tým, tři hody ze vzdálenosti dvou metrů.
+              </li>
+              <li>
+                Výsledek = součet bodových hodnot tří hodů; přešlap = neplatný
+                hod.
+              </li>
+              <li>
+                Nezapíchnutá šipka = 0 bodů; vypadlá se počítá jen po potvrzení
+                rozhodčím.
+              </li>
+              <li>
+                Vyhrává nejvyšší součet; při shodě rozstřel po jedné šipce,
+                dokud jeden tým nevede.
+              </li>
+            </ul>
+          </details>
+        </div>
+      </div>
+
+      <!-- Tajné mise -->
+      <div class="card">
+        <h2>🕵️ Tajné mise <span class="pill">max 15 b</span></h2>
+        <p>
+          Probíhají průběžně během celé akce. Za každou splněnou misi
+          <strong>5 bodů</strong>, maximálně <strong>3 splněné mise</strong> na
+          tým (0 / 5 / 10 / 15 bodů).
+        </p>
+
+        <details class="rules-details">
+          <summary>Losování a průběh</summary>
+          <ul>
+            <li>
+              Na začátku si tým vylosuje dvě mise a smí mít současně nejvýše dvě
+              aktivní kartičky.
+            </li>
+            <li>
+              Po uznání splněné mise si tým vylosuje jednu novou kartičku (max
+              tři splněné celkem).
+            </li>
+            <li>
+              Po dosažení 15 bodů se už nelosuje. Nesplněnou kartičku nelze
+              bezdůvodně vyměnit — výměnu povolí organizátor jen u objektivně
+              nesplnitelného úkolu.
+            </li>
+          </ul>
+        </details>
+        <details class="rules-details">
+          <summary>Utajení a potvrzení splnění</summary>
+          <ul>
+            <li>
+              Obsah mise smí tým sdílet mezi svými členy, ale nesmí ho před
+              splněním prozradit osobě, která je cílem úkolu. Po dokončení už
+              prozradit lze.
+            </li>
+            <li>
+              Splnění musí schválit organizátor — fotografií, videem, nezávislým
+              svědkem nebo přímým pozorováním.
+            </li>
+          </ul>
+        </details>
+
+        <p class="hint" style="text-align: left">
+          Na veřejném žebříčku se zobrazuje jen počet splněných misí a body —
+          konkrétní obsah aktivních kartiček zná pouze příslušný tým a
+          organizátor.
+        </p>
+      </div>
+
+      <!-- Pub kvíz -->
+      <div class="card">
+        <h2>🧠 Pub kvíz <span class="pill">max 15 b</span></h2>
+        <p>
+          Kvíz hrajeme <strong>online</strong>: jeden hráč založí hru a vybere
+          sadu otázek, ostatní se připojí do místnosti pomocí kódu. Bez
+          registrace, zdarma, funguje i na mobilech — atmosféra hospodského
+          kvízu kdekoliv. Všechny otázky i odpovědi generuje umělá inteligence.
+        </p>
+        <p>Body se přidělují podle umístění v kvízu:</p>
+        <ul class="placing">
+          <li><span class="place">1. místo</span> <strong>15 bodů</strong></li>
+          <li><span class="place">2. místo</span> <strong>10 bodů</strong></li>
+          <li><span class="place">3. místo</span> <strong>5 bodů</strong></li>
+          <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
+        </ul>
+      </div>
+    </main>
+
+    <footer><a href="/">Žebříček</a> · <a href="/admin">Admin</a></footer>
+  </body>
 </html>
