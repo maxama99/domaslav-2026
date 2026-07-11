@@ -1,50 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hospodská olympiáda</title>
-  <link rel="stylesheet" href="/style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>" />
-  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
-</head>
-<body>
-  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Přepnout motiv">☀️</button>
-  <header class="hero">
-    <div class="rings">🥇🍺🥈🍻🥉</div>
-    <h1 id="title">Hospodská olympiáda</h1>
-    <p class="subtitle">Živý žebříček - pětiboj · tajné mise · pub kvíz</p>
-    <nav class="topnav"><a href="/pravidla">📜 Pravidla &amp; postup</a></nav>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hospodská olympiáda</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>"
+    />
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem("theme") || "dark";
+    </script>
+  </head>
+  <body>
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Přepnout motiv"
+    >
+      ☀️
+    </button>
+    <header class="hero">
+      <div class="rings">🥇🍺🥈🍻🥉</div>
+      <h1 id="title">Domaslavská olympiáda 2026</h1>
+      <p class="subtitle">Živý žebříček - pětiboj · tajné mise · pub kvíz</p>
+      <nav class="topnav"><a href="/pravidla">📜 Pravidla &amp; postup</a></nav>
+    </header>
 
-  <main>
-    <div class="table-wrap">
-      <table id="board">
-        <thead>
-          <tr>
-            <th class="col-rank">#</th>
-            <th class="col-team">Tým</th>
-            <th class="col-num" title="Hospodský pětiboj (max 15)">Pětiboj</th>
-            <th class="col-num" title="Tajné mise (max 15)">Mise</th>
-            <th class="col-num" title="Pub kvíz (max 15)">Kvíz</th>
-            <th class="col-num col-total">Celkem</th>
-          </tr>
-        </thead>
-        <tbody id="board-body">
-          <tr><td colspan="6" class="empty">Načítám…</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <main>
+      <div class="table-wrap">
+        <table id="board">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-team">Tým</th>
+              <th class="col-num" title="Hospodský pětiboj (max 15)">
+                Pětiboj
+              </th>
+              <th class="col-num" title="Tajné mise (max 15)">Mise</th>
+              <th class="col-num" title="Pub kvíz (max 15)">Kvíz</th>
+              <th class="col-num col-total">Celkem</th>
+            </tr>
+          </thead>
+          <tbody id="board-body">
+            <tr>
+              <td colspan="6" class="empty">Načítám…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <p class="hint">Max 45 bodů (3× 15). Při shodě rozhoduje rozstřelová otázka.</p>
-    <p class="updated" id="updated"></p>
-  </main>
+      <p class="hint">
+        Max 45 bodů (3× 15). Při shodě rozhoduje rozstřelová otázka.
+      </p>
+      <p class="updated" id="updated"></p>
+    </main>
 
-  <footer>
-    <a href="/admin">Admin</a>
-  </footer>
+    <footer>
+      <a href="/admin">Admin</a>
+    </footer>
 
-  <script src="/app.js"></script>
-  <script src="/theme.js"></script>
-</body>
+    <script src="/app.js"></script>
+    <script src="/theme.js"></script>
+  </body>
 </html>
