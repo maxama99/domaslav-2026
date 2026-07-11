@@ -1,0 +1,22 @@
+{
+  "name": "hospodska-olympiada",
+  "version": "1.0.0",
+  "description": "Web na hospodskou olympiádu — žebříček + admin (Cloudflare Workers + D1)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply olympiada --remote",
+    "db:migrate:local": "wrangler d1 migrations apply olympiada --local",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.99.0"
+  }
+}
