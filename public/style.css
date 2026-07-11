@@ -97,12 +97,14 @@ thead th {
   padding: 0.75rem 0.5rem;
   text-align: right;
 }
-thead th.col-rank, thead th.col-team { text-align: left; }
+thead th.col-team { text-align: left; }
+thead th.col-rank { text-align: center; }
 
 tbody td {
   padding: 0.85rem 0.5rem;
   border-top: 1px solid var(--line);
   text-align: right;
+  vertical-align: middle;
   font-variant-numeric: tabular-nums;
 }
 tbody td.col-team { text-align: left; font-weight: 600; }
@@ -113,7 +115,7 @@ tbody td.col-team { text-align: left; font-weight: 600; }
   margin-top: 0.15rem;
   line-height: 1.3;
 }
-tbody td.col-rank { text-align: left; color: var(--muted); width: 2.5rem; }
+tbody td.col-rank { text-align: center; color: var(--muted); width: 3rem; }
 
 .col-total { color: var(--gold); font-weight: 700; }
 td.col-total { font-size: 1.15rem; }
@@ -124,7 +126,24 @@ tr.top-1 td { background: rgba(244, 196, 48, 0.12); }
 tr.top-2 td { background: rgba(200, 200, 200, 0.08); }
 tr.top-3 td { background: rgba(205, 127, 50, 0.10); }
 
-.medal { font-size: 1.15rem; }
+.medal {
+  font-size: 1.3rem;
+  line-height: 1;
+  display: inline-block;
+}
+.rank-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
 
 .hint, .updated {
   text-align: center;

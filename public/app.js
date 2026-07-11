@@ -22,7 +22,10 @@ function render(data) {
   } else {
     body.innerHTML = data.teams
       .map((t, i) => {
-        const rank = i < 3 ? `<span class="medal">${MEDALS[i]}</span>` : i + 1;
+        const rank =
+          i < 3
+            ? `<span class="medal">${MEDALS[i]}</span>`
+            : `<span class="rank-num">${i + 1}</span>`;
         const cls = i < 3 ? `top-${i + 1}` : '';
         const members =
           t.members && t.members.length
