@@ -6,8 +6,10 @@
   <title>Admin - Hospodská olympiáda</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>" />
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
 </head>
 <body>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Přepnout motiv">☀️</button>
   <header class="hero" style="padding-bottom:0.5rem">
     <h1 style="font-size:1.8rem">⚙️ Admin</h1>
     <p class="subtitle"><a href="/">← zpět na žebříček</a></p>
@@ -65,5 +67,6 @@
 
   <div class="toast" id="toast"></div>
   <script src="/admin.js"></script>
+  <script src="/theme.js"></script>
 </body>
 </html>
