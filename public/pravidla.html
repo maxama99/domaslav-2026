@@ -11,11 +11,16 @@
     />
     <script>
       document.documentElement.dataset.theme =
-        localStorage.getItem('theme') || 'dark';
+        localStorage.getItem("theme") || "dark";
     </script>
   </head>
   <body>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Přepnout motiv"></button>
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Přepnout motiv"
+    ></button>
     <header class="hero">
       <div class="rings">🥇🍺🥈🍻🥉</div>
       <h1 id="title">Pravidla &amp; postup</h1>
@@ -86,9 +91,8 @@
           <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
         </ul>
         <p class="hint" style="text-align: left">
-          Při účasti tří týmů se udělují 3, 2 a 1 bod. Při shodě rozhodne
-          dodatečný rozstřel; není-li možný, získají dotčené týmy průměr bodů za
-          svá umístění (např. shoda na 1.–2. místě = 2,5 bodu).
+          Při účasti tří týmů se udělují 3, 2 a 1 bod. Při shodě dostanou body
+          oba dva týmy za dané dělené místo.
         </p>
 
         <details class="rules-details">
