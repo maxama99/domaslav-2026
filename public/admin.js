@@ -103,6 +103,34 @@ async function refresh() {
   $('tiebreak_correct').value = STATE.settings.tiebreak_correct;
   renderDisciplineNames();
   renderTeams();
+  renderCatalog();
+}
+
+function renderCatalog() {
+  const missions = STATE.allMissions || [];
+  $('catalog-count').textContent = `${missions.length}`;
+  $('catalog').innerHTML = missions
+    .map((m) => {
+      const assigned = m.teamName
+        ? `<span class="cat-assign ${m.status === 'completed' ? 'ok' : 'active'}">${escapeHtml(m.teamName)} · ${m.status === 'completed' ? 'splněno' : 'aktivní'}</span>`
+        : '<span class="cat-assign free">volná v balíčku</span>';
+      const conds = m.conditions
+        .map((c) => `<li>${escapeHtml(c)}</li>`)
+        .join('');
+      const warn = m.warning
+        ? `<div class="mcard-warn"><span class="warn-ico">!</span><span><strong>Pozor:</strong> ${escapeHtml(m.warning)}</span></div>`
+        : '';
+      return `<div class="cat-item">
+        <div class="cat-head">
+          <span><span class="m-num">#${m.number}</span><strong>${escapeHtml(m.title)}</strong></span>
+          ${assigned}
+        </div>
+        <p class="cat-intro">${escapeHtml(m.intro)}</p>
+        <ul class="cat-conds">${conds}</ul>
+        ${warn}
+      </div>`;
+    })
+    .join('');
 }
 
 function renderDisciplineNames() {

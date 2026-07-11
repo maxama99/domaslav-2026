@@ -568,3 +568,34 @@ button.danger { background: #b3413a; color: #fff; }
   padding: 0.1rem 0.4rem;
   color: var(--text);
 }
+
+/* ---- Katalog všech misí v adminu ---- */
+.cat-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin: 0.6rem 0;
+  background: var(--panel-2);
+}
+.cat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+.cat-head .m-num { color: var(--muted); margin-right: 0.4rem; }
+.cat-assign {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.cat-assign.free { background: var(--line); color: var(--muted); }
+.cat-assign.active { background: rgba(244, 196, 48, 0.16); color: var(--gold); }
+.cat-assign.ok { background: rgba(63, 174, 107, 0.18); color: var(--ok); }
+.cat-intro { margin: 0.2rem 0 0.4rem; line-height: 1.45; }
+.cat-conds { margin: 0 0 0.4rem; padding-left: 1.2rem; line-height: 1.4; color: var(--muted); }
+.cat-conds li { margin-bottom: 0.15rem; }

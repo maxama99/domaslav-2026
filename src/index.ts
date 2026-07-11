@@ -200,12 +200,47 @@ app.get('/api/admin/state', async (c) => {
     (missionsByTeam[row.team_id] ??= []).push(row);
   }
 
+  // Katalog všech misí v databázi (+ komu jsou přiřazené).
+  const catalog = await db
+    .prepare(
+      `SELECT m.id, m.number, m.title, m.intro, m.conditions, m.warning, m.points,
+              t.name AS team_name, tm.status
+       FROM missions m
+       LEFT JOIN team_missions tm ON tm.mission_id = m.id
+       LEFT JOIN teams t ON t.id = tm.team_id
+       ORDER BY m.number`,
+    )
+    .all<{
+      id: number;
+      number: number;
+      title: string;
+      intro: string;
+      conditions: string;
+      warning: string | null;
+      points: number;
+      team_name: string | null;
+      status: string | null;
+    }>();
+
+  const allMissions = (catalog.results ?? []).map((m) => ({
+    id: m.id,
+    number: m.number,
+    title: m.title,
+    intro: m.intro,
+    conditions: JSON.parse(m.conditions) as string[],
+    warning: m.warning,
+    points: m.points,
+    teamName: m.team_name,
+    status: m.status,
+  }));
+
   return c.json({
     settings: {
       event_title: settingsMap['event_title'] ?? 'Hospodská olympiáda',
       tiebreak_correct: settingsMap['tiebreak_correct'] ?? '',
     },
     disciplines: disciplines.results ?? [],
+    allMissions,
     teams: (teams.results ?? []).map((t) => {
       const missions = missionsByTeam[t.id] ?? [];
       return {
