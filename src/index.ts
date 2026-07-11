@@ -8,6 +8,7 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 const MISSION_POINTS = 5;
+const MAX_MISSIONS = 3;
 
 // ---- Pomocné funkce ---------------------------------------------------------
 
@@ -15,6 +16,32 @@ function clampInt(value: unknown, min: number, max: number): number {
   const n = Math.trunc(Number(value));
   if (!Number.isFinite(n)) return min;
   return Math.max(min, Math.min(max, n));
+}
+
+// Vylosuje týmu `count` misí, které ještě nejsou v žádném týmu (sdílený unikátní
+// balíček). Vrátí počet skutečně přidaných karet.
+async function drawMissions(
+  db: D1Database,
+  teamId: number,
+  count: number,
+): Promise<number> {
+  const available = await db
+    .prepare(
+      `SELECT id FROM missions
+       WHERE id NOT IN (SELECT mission_id FROM team_missions)
+       ORDER BY RANDOM() LIMIT ?`,
+    )
+    .bind(count)
+    .all<{ id: number }>();
+
+  const picked = available.results ?? [];
+  for (const m of picked) {
+    await db
+      .prepare('INSERT INTO team_missions (team_id, mission_id) VALUES (?, ?)')
+      .bind(teamId, m.id)
+      .run();
+  }
+  return picked.length;
 }
 
 // ---- Veřejné API ------------------------------------------------------------
@@ -39,7 +66,8 @@ app.get('/api/leaderboard', async (c) => {
   const teams = await db
     .prepare(
       `SELECT t.id, t.name, t.tiebreak_guess,
-              COALESCE(s.missions_done, 0) AS missions_done,
+              (SELECT COUNT(*) FROM team_missions tm
+                 WHERE tm.team_id = t.id AND tm.status = 'completed') AS missions_done,
               COALESCE(s.quiz_points, 0)   AS quiz_points,
               COALESCE(SUM(td.points), 0)  AS pentathlon
        FROM teams t
@@ -123,9 +151,8 @@ app.get('/api/admin/state', async (c) => {
 
   const teams = await db
     .prepare(
-      `SELECT t.id, t.name, t.tiebreak_guess,
-              COALESCE(s.missions_done, 0) AS missions_done,
-              COALESCE(s.quiz_points, 0)   AS quiz_points
+      `SELECT t.id, t.name, t.secret_word, t.tiebreak_guess,
+              COALESCE(s.quiz_points, 0) AS quiz_points
        FROM teams t
        LEFT JOIN team_scores s ON s.team_id = t.id
        ORDER BY t.id`,
@@ -133,8 +160,8 @@ app.get('/api/admin/state', async (c) => {
     .all<{
       id: number;
       name: string;
+      secret_word: string | null;
       tiebreak_guess: number | null;
-      missions_done: number;
       quiz_points: number;
     }>();
 
@@ -147,41 +174,80 @@ app.get('/api/admin/state', async (c) => {
     (discByTeam[row.team_id] ??= {})[row.discipline_id] = row.points;
   }
 
+  type AdminMissionRow = {
+    team_id: number;
+    mission_id: number;
+    status: string;
+    number: number;
+    title: string;
+  };
+  const tm = await db
+    .prepare(
+      `SELECT tm.team_id, tm.mission_id, tm.status, m.number, m.title
+       FROM team_missions tm JOIN missions m ON m.id = tm.mission_id
+       ORDER BY m.number`,
+    )
+    .all<AdminMissionRow>();
+
+  const missionsByTeam: Record<number, AdminMissionRow[]> = {};
+  for (const row of tm.results ?? []) {
+    (missionsByTeam[row.team_id] ??= []).push(row);
+  }
+
   return c.json({
     settings: {
       event_title: settingsMap['event_title'] ?? 'Hospodská olympiáda',
       tiebreak_correct: settingsMap['tiebreak_correct'] ?? '',
     },
     disciplines: disciplines.results ?? [],
-    teams: (teams.results ?? []).map((t) => ({
-      ...t,
-      discipline_points: discByTeam[t.id] ?? {},
-    })),
+    teams: (teams.results ?? []).map((t) => {
+      const missions = missionsByTeam[t.id] ?? [];
+      return {
+        ...t,
+        discipline_points: discByTeam[t.id] ?? {},
+        missions,
+        missions_done: missions.filter((m) => m.status === 'completed').length,
+      };
+    }),
   });
 });
 
-// Vytvoření týmu.
+// Vytvoření týmu (+ tajné slovo, automaticky vylosuje 2 mise).
 app.post('/api/admin/teams', async (c) => {
-  const body = await c.req.json<{ name?: string }>().catch(() => ({}) as { name?: string });
+  const body = await c.req
+    .json<{ name?: string; secret_word?: string }>()
+    .catch(() => ({}) as { name?: string; secret_word?: string });
   const name = (body.name ?? '').trim();
+  const secret = (body.secret_word ?? '').trim();
   if (!name) return c.json({ error: 'Chybí název týmu' }, 400);
+  if (!secret) return c.json({ error: 'Chybí tajné slovo' }, 400);
 
-  const res = await c.env.DB.prepare('INSERT INTO teams (name) VALUES (?)')
-    .bind(name)
-    .run();
-  const teamId = res.meta.last_row_id;
-  await c.env.DB.prepare(
-    'INSERT OR IGNORE INTO team_scores (team_id) VALUES (?)',
+  const dup = await c.env.DB.prepare(
+    'SELECT id FROM teams WHERE lower(secret_word) = lower(?)',
   )
+    .bind(secret)
+    .first<{ id: number }>();
+  if (dup) return c.json({ error: 'Tajné slovo už používá jiný tým' }, 400);
+
+  const res = await c.env.DB.prepare(
+    'INSERT INTO teams (name, secret_word) VALUES (?, ?)',
+  )
+    .bind(name, secret)
+    .run();
+  const teamId = Number(res.meta.last_row_id);
+  await c.env.DB.prepare('INSERT OR IGNORE INTO team_scores (team_id) VALUES (?)')
     .bind(teamId)
     .run();
+
+  await drawMissions(c.env.DB, teamId, 2);
 
   return c.json({ id: teamId, name });
 });
 
-// Smazání týmu.
+// Smazání týmu (uvolní jeho karty zpět do balíčku).
 app.delete('/api/admin/teams/:id', async (c) => {
   const id = Number(c.req.param('id'));
+  await c.env.DB.prepare('DELETE FROM team_missions WHERE team_id = ?').bind(id).run();
   await c.env.DB.prepare('DELETE FROM team_discipline WHERE team_id = ?').bind(id).run();
   await c.env.DB.prepare('DELETE FROM team_scores WHERE team_id = ?').bind(id).run();
   await c.env.DB.prepare('DELETE FROM teams WHERE id = ?').bind(id).run();
@@ -211,22 +277,24 @@ app.put('/api/admin/teams/:id/pentathlon', async (c) => {
   return c.json({ ok: true, points });
 });
 
-// Splněné mise: { missions_done }
-app.put('/api/admin/teams/:id/missions', async (c) => {
+// Potvrzení / vrácení splnění mise: { status: 'completed' | 'active' }
+app.put('/api/admin/teams/:id/missions/:missionId', async (c) => {
   const teamId = Number(c.req.param('id'));
+  const missionId = Number(c.req.param('missionId'));
   const body = await c.req
-    .json<{ missions_done?: number }>()
-    .catch(() => ({}) as { missions_done?: number });
-  const missions = clampInt(body.missions_done, 0, 3);
+    .json<{ status?: string }>()
+    .catch(() => ({}) as { status?: string });
+  const status = body.status === 'completed' ? 'completed' : 'active';
+  const completedAt = status === 'completed' ? "datetime('now')" : 'NULL';
 
   await c.env.DB.prepare(
-    `INSERT INTO team_scores (team_id, missions_done) VALUES (?, ?)
-     ON CONFLICT(team_id) DO UPDATE SET missions_done = excluded.missions_done`,
+    `UPDATE team_missions SET status = ?, completed_at = ${completedAt}
+     WHERE team_id = ? AND mission_id = ?`,
   )
-    .bind(teamId, missions)
+    .bind(status, teamId, missionId)
     .run();
 
-  return c.json({ ok: true, missions_done: missions });
+  return c.json({ ok: true, status });
 });
 
 // Kvíz + rozstřel: { quiz_points, tiebreak_guess }
@@ -297,6 +365,111 @@ app.put('/api/admin/settings', async (c) => {
   }
 
   return c.json({ ok: true });
+});
+
+// ---- Týmové API (self-service tajné mise) -----------------------------------
+
+type MissionRow = {
+  mission_id: number;
+  number: number;
+  title: string;
+  intro: string;
+  conditions: string;
+  warning: string | null;
+  points: number;
+  status: string;
+};
+
+async function findTeamBySecret(db: D1Database, secret: string) {
+  if (!secret.trim()) return null;
+  return db
+    .prepare('SELECT id, name FROM teams WHERE lower(secret_word) = lower(?)')
+    .bind(secret.trim())
+    .first<{ id: number; name: string }>();
+}
+
+async function teamState(db: D1Database, teamId: number, name: string) {
+  const rows = await db
+    .prepare(
+      `SELECT tm.mission_id, tm.status, m.number, m.title, m.intro,
+              m.conditions, m.warning, m.points
+       FROM team_missions tm JOIN missions m ON m.id = tm.mission_id
+       WHERE tm.team_id = ? ORDER BY tm.drawn_at`,
+    )
+    .bind(teamId)
+    .all<MissionRow>();
+
+  const missions = (rows.results ?? []).map((m) => ({
+    id: m.mission_id,
+    number: m.number,
+    title: m.title,
+    intro: m.intro,
+    conditions: JSON.parse(m.conditions) as string[],
+    warning: m.warning,
+    points: m.points,
+    status: m.status,
+  }));
+
+  const completed = missions.filter((m) => m.status === 'completed').length;
+  const drawn = missions.length;
+  const deck = await db
+    .prepare(
+      `SELECT COUNT(*) AS n FROM missions
+       WHERE id NOT IN (SELECT mission_id FROM team_missions)`,
+    )
+    .first<{ n: number }>();
+  const deckLeft = deck?.n ?? 0;
+
+  return {
+    name,
+    missions,
+    drawn,
+    completed,
+    deckLeft,
+    canDraw: completed >= 1 && drawn < MAX_MISSIONS && deckLeft > 0,
+  };
+}
+
+app.post('/api/team/login', async (c) => {
+  const body = await c.req
+    .json<{ secret_word?: string }>()
+    .catch(() => ({}) as { secret_word?: string });
+  const team = await findTeamBySecret(c.env.DB, body.secret_word ?? '');
+  if (!team) return c.json({ error: 'Neplatné tajné slovo' }, 401);
+  return c.json({ ok: true, name: team.name });
+});
+
+// Auth middleware pro /api/team/* (kromě loginu).
+app.use('/api/team/*', async (c, next) => {
+  if (c.req.path === '/api/team/login') return next();
+  const team = await findTeamBySecret(c.env.DB, c.req.header('x-team-secret') ?? '');
+  if (!team) return c.json({ error: 'Neplatné tajné slovo' }, 401);
+  c.set('teamId' as never, team.id as never);
+  c.set('teamName' as never, team.name as never);
+  await next();
+});
+
+app.get('/api/team/state', async (c) => {
+  const teamId = c.get('teamId' as never) as number;
+  const name = c.get('teamName' as never) as string;
+  return c.json(await teamState(c.env.DB, teamId, name));
+});
+
+app.post('/api/team/draw', async (c) => {
+  const teamId = c.get('teamId' as never) as number;
+  const name = c.get('teamName' as never) as string;
+  const state = await teamState(c.env.DB, teamId, name);
+  if (!state.canDraw) {
+    const reason =
+      state.completed < 1
+        ? 'Nejdřív musíš mít potvrzenou aspoň jednu splněnou misi.'
+        : state.drawn >= MAX_MISSIONS
+          ? 'Už máš maximální počet karet.'
+          : 'V balíčku už nezbývá žádná volná mise.';
+    return c.json({ error: reason }, 409);
+  }
+  await drawMissions(c.env.DB, teamId, 1);
+  return c.json(await teamState(c.env.DB, teamId, name));
 });
 
 export default app;
