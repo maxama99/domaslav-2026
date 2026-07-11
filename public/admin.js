@@ -10,13 +10,6 @@ const PENT_OPTS = [
   { value: 2, label: '2 b' },
   { value: 3, label: '3 b' },
 ];
-// Mise: value = počet splněných (0–3), label = body (×5).
-const MISSION_OPTS = [
-  { value: 0, label: '0 b' },
-  { value: 1, label: '5 b' },
-  { value: 2, label: '10 b' },
-  { value: 3, label: '15 b' },
-];
 // Kvíz: value = body dle umístění.
 const QUIZ_OPTS = [
   { value: 0, label: '-' },
@@ -145,12 +138,28 @@ function renderTeams() {
         )
         .join('');
 
+      const missionList = (t.missions || []).length
+        ? (t.missions || [])
+            .map((m) => {
+              const done = m.status === 'completed';
+              return `<div class="admin-mission${done ? ' done' : ''}">
+                <span><span class="m-num">#${m.number}</span><span class="m-title">${escapeHtml(m.title)}</span></span>
+                <button class="${done ? 'ghost' : ''}" data-mission-team="${t.id}"
+                        data-mission="${m.mission_id}" data-next="${done ? 'active' : 'completed'}">
+                  ${done ? '↩ Vrátit' : '✓ Splněno'}
+                </button>
+              </div>`;
+            })
+            .join('')
+        : '<p class="hint" style="text-align:left">Žádné nalosované mise.</p>';
+
       return `<div class="team-block">
         <div class="team-head">
           <strong>${escapeHtml(t.name)}</strong>
           <span><span class="pill">${total} / 45 b</span>
             <button class="danger" data-del="${t.id}">Smazat</button></span>
         </div>
+        <p class="secret-tag">Tajné slovo: <code>${escapeHtml(t.secret_word || '—')}</code></p>
 
         <div class="team-section">
           <div class="section-head">
@@ -163,10 +172,7 @@ function renderTeams() {
           <div class="section-head">
             <span>🕵️ Tajné mise</span><span class="subscore">${missionPts} / 15 b</span>
           </div>
-          <div class="seg-field">
-            <label>Splněné mise (body)</label>
-            ${segGroup('missions', t.id, t.missions_done, MISSION_OPTS)}
-          </div>
+          <div class="admin-missions">${missionList}</div>
         </div>
 
         <div class="team-section">
@@ -198,8 +204,6 @@ function renderTeams() {
           discipline_id: Number(seg.dataset.disc),
           points: value,
         });
-      } else if (seg.dataset.kind === 'missions') {
-        await api(`/api/admin/teams/${team}/missions`, 'PUT', { missions_done: value });
       } else if (seg.dataset.kind === 'quiz') {
         const tb = $('teams').querySelector(`input[data-tiebreak][data-team="${team}"]`).value;
         await api(`/api/admin/teams/${team}/quiz`, 'PUT', {
@@ -228,6 +232,19 @@ function renderTeams() {
     });
   });
 
+  // Potvrzení / vrácení splnění mise.
+  $('teams').querySelectorAll('button[data-mission]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      await api(
+        `/api/admin/teams/${btn.dataset.missionTeam}/missions/${btn.dataset.mission}`,
+        'PUT',
+        { status: btn.dataset.next },
+      );
+      toast('Uloženo');
+      await refresh();
+    });
+  });
+
   $('teams').querySelectorAll('button[data-del]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       if (!confirm('Opravdu smazat tým?')) return;
@@ -240,11 +257,23 @@ function renderTeams() {
 
 $('add-team').addEventListener('click', async () => {
   const name = $('new-team').value.trim();
-  if (!name) return;
-  await api('/api/admin/teams', 'POST', { name });
+  const secret = $('new-secret').value.trim();
+  if (!name) return toast('Vyplň název týmu.');
+  if (!secret) return toast('Vyplň tajné slovo.');
+  const res = await fetch('/api/admin/teams', {
+    method: 'POST',
+    headers: { 'x-admin-password': PASSWORD, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, secret_word: secret }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) return toast(data.error || 'Tým se nepodařilo přidat.');
   $('new-team').value = '';
-  toast('Tým přidán');
+  $('new-secret').value = '';
+  toast('Tým přidán, vylosovány 2 mise');
   await refresh();
+});
+$('new-secret').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('add-team').click();
 });
 $('new-team').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') $('add-team').click();

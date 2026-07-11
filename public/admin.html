@@ -49,12 +49,19 @@
       <div class="card">
         <h2>Přidat tým</h2>
         <div class="row">
-          <div style="flex:1">
+          <div style="flex:1;min-width:12rem">
             <label for="new-team">Název týmu</label>
             <input type="text" id="new-team" placeholder="např. Zlaté ledvinky" />
           </div>
+          <div style="flex:1;min-width:12rem">
+            <label for="new-secret">Tajné slovo (pro vstup týmu)</label>
+            <input type="text" id="new-secret" placeholder="např. zlata-slepice" />
+          </div>
           <button id="add-team">Přidat</button>
         </div>
+        <p class="hint" style="text-align:left;margin-bottom:0">
+          Tým se tímto slovem přihlásí na <a href="/tym">/tym</a> a vylosují se mu 2 tajné mise.
+        </p>
       </div>
 
       <!-- Týmy a body -->
