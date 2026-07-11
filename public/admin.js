@@ -160,6 +160,11 @@ function renderTeams() {
             <button class="danger" data-del="${t.id}">Smazat</button></span>
         </div>
         <p class="secret-tag">Tajné slovo: <code>${escapeHtml(t.secret_word || '—')}</code></p>
+        <div class="seg-field" style="margin-top:0.4rem">
+          <label>👥 Účastníci (oddělené čárkou)</label>
+          <input type="text" data-team="${t.id}" data-members
+                 value="${escapeHtml(t.members || '')}" placeholder="Anna, Petr, Katka" />
+        </div>
 
         <div class="team-section">
           <div class="section-head">
@@ -226,6 +231,17 @@ function renderTeams() {
       await api(`/api/admin/teams/${team}/quiz`, 'PUT', {
         quiz_points: active ? Number(active.dataset.value) : 0,
         tiebreak_guess: inp.value === '' ? null : Number(inp.value),
+      });
+      toast('Uloženo');
+      await refresh();
+    });
+  });
+
+  // Účastníci týmu.
+  $('teams').querySelectorAll('input[data-members]').forEach((inp) => {
+    inp.addEventListener('change', async () => {
+      await api(`/api/admin/teams/${inp.dataset.team}/members`, 'PUT', {
+        members: inp.value,
       });
       toast('Uloženo');
       await refresh();

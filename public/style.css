@@ -106,6 +106,13 @@ tbody td {
   font-variant-numeric: tabular-nums;
 }
 tbody td.col-team { text-align: left; font-weight: 600; }
+.team-members {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+  line-height: 1.3;
+}
 tbody td.col-rank { text-align: left; color: var(--muted); width: 2.5rem; }
 
 .col-total { color: var(--gold); font-weight: 700; }

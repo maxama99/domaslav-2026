@@ -24,9 +24,13 @@ function render(data) {
       .map((t, i) => {
         const rank = i < 3 ? `<span class="medal">${MEDALS[i]}</span>` : i + 1;
         const cls = i < 3 ? `top-${i + 1}` : '';
+        const members =
+          t.members && t.members.length
+            ? `<div class="team-members">${t.members.map(escapeHtml).join(', ')}</div>`
+            : '';
         return `<tr class="${cls}">
           <td class="col-rank">${rank}</td>
-          <td class="col-team">${escapeHtml(t.name)}</td>
+          <td class="col-team">${escapeHtml(t.name)}${members}</td>
           <td>${t.pentathlon}</td>
           <td>${t.missions}</td>
           <td>${t.quiz}</td>

@@ -65,7 +65,7 @@ app.get('/api/leaderboard', async (c) => {
 
   const teams = await db
     .prepare(
-      `SELECT t.id, t.name, t.tiebreak_guess,
+      `SELECT t.id, t.name, t.members, t.tiebreak_guess,
               (SELECT COUNT(*) FROM team_missions tm
                  WHERE tm.team_id = t.id AND tm.status = 'completed') AS missions_done,
               COALESCE(s.quiz_points, 0)   AS quiz_points,
@@ -78,6 +78,7 @@ app.get('/api/leaderboard', async (c) => {
     .all<{
       id: number;
       name: string;
+      members: string | null;
       tiebreak_guess: number | null;
       missions_done: number;
       quiz_points: number;
@@ -94,6 +95,10 @@ app.get('/api/leaderboard', async (c) => {
     return {
       id: t.id,
       name: t.name,
+      members: (t.members ?? '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
       pentathlon: t.pentathlon,
       missions,
       missionsDone: t.missions_done,
@@ -151,7 +156,7 @@ app.get('/api/admin/state', async (c) => {
 
   const teams = await db
     .prepare(
-      `SELECT t.id, t.name, t.secret_word, t.tiebreak_guess,
+      `SELECT t.id, t.name, t.members, t.secret_word, t.tiebreak_guess,
               COALESCE(s.quiz_points, 0) AS quiz_points
        FROM teams t
        LEFT JOIN team_scores s ON s.team_id = t.id
@@ -160,6 +165,7 @@ app.get('/api/admin/state', async (c) => {
     .all<{
       id: number;
       name: string;
+      members: string | null;
       secret_word: string | null;
       tiebreak_guess: number | null;
       quiz_points: number;
@@ -275,6 +281,21 @@ app.put('/api/admin/teams/:id/pentathlon', async (c) => {
     .run();
 
   return c.json({ ok: true, points });
+});
+
+// Účastníci týmu: { members }
+app.put('/api/admin/teams/:id/members', async (c) => {
+  const teamId = Number(c.req.param('id'));
+  const body = await c.req
+    .json<{ members?: string }>()
+    .catch(() => ({}) as { members?: string });
+  const members = (body.members ?? '').trim();
+
+  await c.env.DB.prepare('UPDATE teams SET members = ? WHERE id = ?')
+    .bind(members || null, teamId)
+    .run();
+
+  return c.json({ ok: true });
 });
 
 // Potvrzení / vrácení splnění mise: { status: 'completed' | 'active' }
