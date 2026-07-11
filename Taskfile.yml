@@ -1,0 +1,76 @@
+# Taskfile pro Hospodskou olympiádu — `task <příkaz>`
+# Nainstaluj go-task: https://taskfile.dev  (na většině systémů `brew install go-task` / `apt install task`)
+version: "3"
+
+tasks:
+  default:
+    desc: Vypíše dostupné příkazy
+    cmds:
+      - task --list
+    silent: true
+
+  install:
+    desc: Nainstaluje závislosti
+    cmds:
+      - npm install
+
+  dev:
+    desc: Spustí lokální dev server (http://localhost:8787)
+    cmds:
+      - npm run dev
+
+  typecheck:
+    desc: Zkontroluje TypeScript
+    cmds:
+      - npm run typecheck
+
+  # ---- Databáze ----
+  db:migrate:local:
+    desc: Aplikuje migrace na lokální SQLite
+    cmds:
+      - npx wrangler d1 migrations apply olympiada --local
+
+  db:migrate:
+    desc: Aplikuje migrace na produkční D1 (remote)
+    cmds:
+      - npx wrangler d1 migrations apply olympiada --remote
+
+  db:reset:local:
+    desc: Smaže a znovu vytvoří lokální databázi (POZOR, smaže lokální data)
+    cmds:
+      - rm -rf .wrangler/state/v3/d1
+      - task db:migrate:local
+
+  db:console:
+    desc: 'Spustí SQL dotaz na produkční DB. Použití: task db:console -- "SELECT * FROM teams"'
+    cmds:
+      - npx wrangler d1 execute olympiada --remote --command "{{.CLI_ARGS}}"
+
+  # ---- Cloudflare / one-time setup ----
+  login:
+    desc: Přihlášení do Cloudflare
+    cmds:
+      - npx wrangler login
+
+  db:create:
+    desc: Vytvoří D1 databázi (database_id pak vlož do wrangler.toml)
+    cmds:
+      - npx wrangler d1 create olympiada
+
+  secret:
+    desc: Nastaví admin heslo jako Worker secret
+    cmds:
+      - npx wrangler secret put ADMIN_PASSWORD
+
+  # ---- Deploy ----
+  deploy:
+    desc: Nasadí Worker na Cloudflare (ruční deploy)
+    cmds:
+      - npm run deploy
+
+  ship:
+    desc: 'Commit + push do main (spustí auto-deploy). Použití: task ship -- "zpráva commitu"'
+    cmds:
+      - git add -A
+      - git commit -m "{{.CLI_ARGS}}"
+      - git push
