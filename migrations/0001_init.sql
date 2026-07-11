@@ -43,5 +43,5 @@ INSERT OR IGNORE INTO disciplines (id, name) VALUES
   (5, 'Disciplína 5');
 
 INSERT OR IGNORE INTO settings (key, value) VALUES
-  ('event_title', 'Hospodská olympiáda'),
+  ('event_title', 'Domaslavská olympiáda 2026'),
   ('tiebreak_correct', '');
