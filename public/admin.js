@@ -3,6 +3,38 @@ let STATE = null;
 
 const $ = (id) => document.getElementById(id);
 
+// Možnosti segmentových tlačítek. `value` = uložená hodnota, `label` = popisek.
+const PENT_OPTS = [
+  { value: 0, label: '–' },
+  { value: 1, label: '1 b' },
+  { value: 2, label: '2 b' },
+  { value: 3, label: '3 b' },
+];
+// Mise: value = počet splněných (0–3), label = body (×5).
+const MISSION_OPTS = [
+  { value: 0, label: '0 b' },
+  { value: 1, label: '5 b' },
+  { value: 2, label: '10 b' },
+  { value: 3, label: '15 b' },
+];
+// Kvíz: value = body dle umístění.
+const QUIZ_OPTS = [
+  { value: 0, label: '—' },
+  { value: 15, label: '1. (15 b)' },
+  { value: 10, label: '2. (10 b)' },
+  { value: 5, label: '3. (5 b)' },
+];
+
+function segGroup(kind, teamId, current, options, extra = '') {
+  const buttons = options
+    .map(
+      (o) =>
+        `<button type="button" class="seg-btn${o.value === current ? ' active' : ''}" data-value="${o.value}">${o.label}</button>`,
+    )
+    .join('');
+  return `<div class="seg" data-kind="${kind}" data-team="${teamId}" ${extra}>${buttons}</div>`;
+}
+
 function toast(msg) {
   const el = $('toast');
   el.textContent = msg;
@@ -103,12 +135,11 @@ function renderTeams() {
         0,
       );
       const total = pentTotal + t.missions_done * 5 + t.quiz_points;
-      const discInputs = STATE.disciplines
+      const discSegs = STATE.disciplines
         .map(
-          (d) => `<div class="field-inline">
+          (d) => `<div class="seg-field">
             <label>${escapeHtml(d.name)}</label>
-            <input type="number" min="0" max="3" data-team="${t.id}" data-disc="${d.id}"
-                   value="${t.discipline_points[d.id] || 0}" />
+            ${segGroup('pent', t.id, t.discipline_points[d.id] || 0, PENT_OPTS, `data-disc="${d.id}"`)}
           </div>`,
         )
         .join('');
@@ -120,70 +151,67 @@ function renderTeams() {
             <button class="danger" data-del="${t.id}">Smazat</button></span>
         </div>
 
-        <label style="margin-top:0.8rem">Pětiboj (0–3 na disciplínu)</label>
-        <div class="grid">${discInputs}</div>
+        <label style="margin-top:0.8rem">🍺 Pětiboj — body za disciplínu</label>
+        <div class="disc-segs">${discSegs}</div>
 
-        <div class="grid" style="margin-top:0.8rem">
-          <div class="field-inline">
-            <label>Splněné mise (0–3)</label>
-            <input type="number" min="0" max="3" data-team="${t.id}" data-missions
-                   value="${t.missions_done}" />
-          </div>
-          <div class="field-inline">
-            <label>Kvíz (umístění)</label>
-            <select data-team="${t.id}" data-quiz>
-              <option value="0"  ${t.quiz_points === 0 ? 'selected' : ''}>—</option>
-              <option value="15" ${t.quiz_points === 15 ? 'selected' : ''}>1. místo (15)</option>
-              <option value="10" ${t.quiz_points === 10 ? 'selected' : ''}>2. místo (10)</option>
-              <option value="5"  ${t.quiz_points === 5 ? 'selected' : ''}>3. místo (5)</option>
-            </select>
-          </div>
-          <div class="field-inline">
-            <label>Rozstřel (odhad)</label>
-            <input type="number" step="any" data-team="${t.id}" data-tiebreak
-                   value="${t.tiebreak_guess ?? ''}" style="width:6rem" />
-          </div>
+        <div class="seg-field" style="margin-top:0.9rem">
+          <label>🕵️ Tajné mise — splněné (body)</label>
+          ${segGroup('missions', t.id, t.missions_done, MISSION_OPTS)}
+        </div>
+
+        <div class="seg-field" style="margin-top:0.9rem">
+          <label>🧠 Pub kvíz — umístění (body)</label>
+          ${segGroup('quiz', t.id, t.quiz_points, QUIZ_OPTS)}
+        </div>
+
+        <div class="seg-field" style="margin-top:0.9rem">
+          <label>🎯 Rozstřel (číselný odhad)</label>
+          <input type="number" step="any" data-team="${t.id}" data-tiebreak
+                 value="${t.tiebreak_guess ?? ''}" style="width:8rem" />
         </div>
       </div>`;
     })
     .join('');
 
-  // Body pětiboje — uložení při změně.
-  $('teams').querySelectorAll('input[data-disc]').forEach((inp) => {
-    inp.addEventListener('change', async () => {
-      await api(`/api/admin/teams/${inp.dataset.team}/pentathlon`, 'PUT', {
-        discipline_id: Number(inp.dataset.disc),
-        points: Number(inp.value),
-      });
+  // Klik na segmentové tlačítko → uložení.
+  $('teams').querySelectorAll('.seg-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const seg = btn.closest('.seg');
+      const team = seg.dataset.team;
+      const value = Number(btn.dataset.value);
+      if (seg.dataset.kind === 'pent') {
+        await api(`/api/admin/teams/${team}/pentathlon`, 'PUT', {
+          discipline_id: Number(seg.dataset.disc),
+          points: value,
+        });
+      } else if (seg.dataset.kind === 'missions') {
+        await api(`/api/admin/teams/${team}/missions`, 'PUT', { missions_done: value });
+      } else if (seg.dataset.kind === 'quiz') {
+        const tb = $('teams').querySelector(`input[data-tiebreak][data-team="${team}"]`).value;
+        await api(`/api/admin/teams/${team}/quiz`, 'PUT', {
+          quiz_points: value,
+          tiebreak_guess: tb === '' ? null : Number(tb),
+        });
+      }
       toast('Uloženo');
       await refresh();
     });
   });
 
-  $('teams').querySelectorAll('input[data-missions]').forEach((inp) => {
+  // Rozstřel — uloží se spolu s aktuálním kvízovým skóre.
+  $('teams').querySelectorAll('input[data-tiebreak]').forEach((inp) => {
     inp.addEventListener('change', async () => {
-      await api(`/api/admin/teams/${inp.dataset.team}/missions`, 'PUT', {
-        missions_done: Number(inp.value),
+      const team = inp.dataset.team;
+      const active = $('teams').querySelector(
+        `.seg[data-kind="quiz"][data-team="${team}"] .seg-btn.active`,
+      );
+      await api(`/api/admin/teams/${team}/quiz`, 'PUT', {
+        quiz_points: active ? Number(active.dataset.value) : 0,
+        tiebreak_guess: inp.value === '' ? null : Number(inp.value),
       });
       toast('Uloženo');
       await refresh();
     });
-  });
-
-  // Kvíz + rozstřel spolu (oba jdou přes /quiz endpoint).
-  const saveQuiz = async (teamId) => {
-    const block = $('teams');
-    const quiz = block.querySelector(`[data-quiz][data-team="${teamId}"]`).value;
-    const tb = block.querySelector(`input[data-tiebreak][data-team="${teamId}"]`).value;
-    await api(`/api/admin/teams/${teamId}/quiz`, 'PUT', {
-      quiz_points: Number(quiz),
-      tiebreak_guess: tb === '' ? null : Number(tb),
-    });
-    toast('Uloženo');
-    await refresh();
-  };
-  $('teams').querySelectorAll('[data-quiz], input[data-tiebreak]').forEach((inp) => {
-    inp.addEventListener('change', () => saveQuiz(inp.dataset.team));
   });
 
   $('teams').querySelectorAll('button[data-del]').forEach((btn) => {
