@@ -130,9 +130,13 @@ function renderTeams() {
                    value="${t.missions_done}" />
           </div>
           <div class="field-inline">
-            <label>Kvíz (0–15)</label>
-            <input type="number" min="0" max="15" data-team="${t.id}" data-quiz
-                   value="${t.quiz_points}" />
+            <label>Kvíz (umístění)</label>
+            <select data-team="${t.id}" data-quiz>
+              <option value="0"  ${t.quiz_points === 0 ? 'selected' : ''}>—</option>
+              <option value="15" ${t.quiz_points === 15 ? 'selected' : ''}>1. místo (15)</option>
+              <option value="10" ${t.quiz_points === 10 ? 'selected' : ''}>2. místo (10)</option>
+              <option value="5"  ${t.quiz_points === 5 ? 'selected' : ''}>3. místo (5)</option>
+            </select>
           </div>
           <div class="field-inline">
             <label>Rozstřel (odhad)</label>
@@ -169,7 +173,7 @@ function renderTeams() {
   // Kvíz + rozstřel spolu (oba jdou přes /quiz endpoint).
   const saveQuiz = async (teamId) => {
     const block = $('teams');
-    const quiz = block.querySelector(`input[data-quiz][data-team="${teamId}"]`).value;
+    const quiz = block.querySelector(`[data-quiz][data-team="${teamId}"]`).value;
     const tb = block.querySelector(`input[data-tiebreak][data-team="${teamId}"]`).value;
     await api(`/api/admin/teams/${teamId}/quiz`, 'PUT', {
       quiz_points: Number(quiz),
@@ -178,7 +182,7 @@ function renderTeams() {
     toast('Uloženo');
     await refresh();
   };
-  $('teams').querySelectorAll('input[data-quiz], input[data-tiebreak]').forEach((inp) => {
+  $('teams').querySelectorAll('[data-quiz], input[data-tiebreak]').forEach((inp) => {
     inp.addEventListener('change', () => saveQuiz(inp.dataset.team));
   });
 
