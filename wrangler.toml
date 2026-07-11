@@ -1,0 +1,19 @@
+name = "hospodska-olympiada"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Vlastní doména. Zóna mmaxa.cz musí být spravovaná v Cloudflare;
+# wrangler pak sám vytvoří DNS záznam a route při deployi.
+routes = [
+  { pattern = "olympiada.mmaxa.cz", custom_domain = true }
+]
+
+[assets]
+directory = "./public"
+
+# D1 databáze. `database_id` doplň po `npx wrangler d1 create olympiada`.
+[[d1_databases]]
+binding = "DB"
+database_name = "olympiada"
+database_id = "e2ecead5-8386-4991-b2ba-1ac061ae084b"
+migrations_dir = "migrations"
