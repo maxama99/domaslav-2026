@@ -348,3 +348,92 @@ button.danger { background: #b3413a; color: #fff; }
 .toast.show { opacity: 1; }
 
 .hidden { display: none !important; }
+
+/* ---- Karty tajných misí (týmová sekce) ---- */
+.mcard { border-left: 4px solid var(--accent, #ffb84d); }
+.mcard.completed { opacity: 0.82; }
+.mcard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.mcard-tag {
+  background: #9b2c2c;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+.mcard-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+.mcard-badge.active { background: rgba(244, 196, 48, 0.18); color: var(--gold); }
+.mcard-badge.ok { background: rgba(64, 160, 90, 0.2); color: #4fbf78; }
+.mcard-title { margin: 0.1rem 0 0.4rem; font-size: 1.25rem; }
+.mcard-intro { margin: 0 0 0.7rem; line-height: 1.5; }
+.mcard-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.mcard-conds { list-style: none; padding: 0; margin: 0 0 0.6rem; }
+.mcard-cond {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1.6rem;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--line);
+}
+.mcard-conds .mcard-cond:last-child { border-bottom: none; }
+.mcard-cond::before {
+  content: "☐";
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.mcard-cond.done::before { content: "☑"; color: #4fbf78; }
+.mcard-warn {
+  background: var(--warn-bg, rgba(217, 154, 25, 0.14));
+  border: 1px solid rgba(217, 154, 25, 0.5);
+  color: var(--warn-ink, #e0a83a);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* ---- Nalosované mise v adminu ---- */
+.admin-mission {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.admin-mission:last-child { border-bottom: none; }
+.admin-mission .m-title { font-weight: 600; }
+.admin-mission .m-num { color: var(--muted); font-size: 0.85rem; margin-right: 0.4rem; }
+.admin-mission.done .m-title { color: #4fbf78; }
+.secret-tag {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.secret-tag code {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.1rem 0.4rem;
+  color: var(--text);
+}

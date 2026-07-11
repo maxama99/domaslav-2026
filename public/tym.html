@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Týmová sekce - Domaslavská olympiáda</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>" />
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';</script>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Přepnout motiv"></button>
+  <header class="hero" style="padding-bottom:0.5rem">
+    <h1 style="font-size:1.8rem">🕵️ Týmová sekce</h1>
+    <p class="subtitle"><a href="/">← zpět na žebříček</a></p>
+  </header>
+
+  <main class="admin-wrap">
+    <!-- Přihlášení tajným slovem -->
+    <div class="card" id="login-card">
+      <h2>Tajné slovo týmu</h2>
+      <p class="hint" style="text-align:left;margin-top:0">
+        Zadej tajné slovo, které dostal tvůj tým od organizátora. Uvidíš své nalosované tajné mise.
+      </p>
+      <div class="row">
+        <div style="flex:1">
+          <label for="secret">Tajné slovo</label>
+          <input type="password" id="secret" placeholder="tajné slovo" />
+        </div>
+        <button id="login-btn">Vstoupit</button>
+      </div>
+      <p id="login-error" class="hint hidden" style="color:#e88">Neplatné tajné slovo.</p>
+    </div>
+
+    <div id="panel" class="hidden">
+      <div class="card">
+        <div class="team-head">
+          <strong id="team-name" style="font-size:1.2rem"></strong>
+          <span class="pill" id="mission-score"></span>
+        </div>
+        <p class="hint" style="text-align:left;margin-bottom:0">
+          Obsah misí drž v tajnosti před těmi, koho se týkají. Splnění potvrzuje organizátor.
+        </p>
+      </div>
+
+      <div id="missions"></div>
+
+      <div class="card" id="draw-card">
+        <div class="row" style="align-items:center">
+          <div style="flex:1">
+            <strong>Losování další mise</strong>
+            <p class="hint" id="draw-hint" style="text-align:left;margin:0.3rem 0 0"></p>
+          </div>
+          <button id="draw-btn">Vylosovat další misi</button>
+        </div>
+      </div>
+
+      <p style="text-align:center;margin-top:1rem">
+        <button class="ghost" id="logout-btn">Odhlásit</button>
+      </p>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="/tym.js"></script>
+  <script src="/theme.js"></script>
+</body>
+</html>
