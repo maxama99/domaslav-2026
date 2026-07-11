@@ -82,29 +82,45 @@ function render(data) {
   $('team-name').textContent = data.name;
   $('mission-score').textContent = `${data.completed * 5} / 15 b`;
 
+  // Přehled průběhu (3 sloty)
+  const slots = [0, 1, 2]
+    .map((i) => {
+      const cls =
+        i < data.completed ? 'done' : i < data.drawn ? 'filled' : '';
+      return `<span class="mission-slot ${cls}"></span>`;
+    })
+    .join('');
+  $('mission-progress').innerHTML = slots;
+
   $('missions').innerHTML = data.missions
     .map((m) => {
       const done = m.status === 'completed';
       const conds = m.conditions
         .map(
           (c) =>
-            `<li class="mcard-cond${done ? ' done' : ''}">${escapeHtml(c)}</li>`,
+            `<li class="mcard-cond${done ? ' done' : ''}"><span class="cond-box"></span><span>${escapeHtml(c)}</span></li>`,
         )
         .join('');
       const warn = m.warning
-        ? `<div class="mcard-warn"><strong>POZOR:</strong> ${escapeHtml(m.warning)}</div>`
+        ? `<div class="mcard-warn"><span class="warn-ico">!</span><span><strong>Pozor:</strong> ${escapeHtml(m.warning)}</span></div>`
         : '';
-      return `<div class="card mcard${done ? ' completed' : ''}">
-        <div class="mcard-head">
-          <span class="mcard-tag">TAJNÁ MISE ${m.number}</span>
-          <span class="mcard-badge ${done ? 'ok' : 'active'}">${done ? '✓ Splněno' : 'Aktivní'}</span>
+      return `<article class="mcard${done ? ' completed' : ''}">
+        <div class="mcard-top">
+          <span class="mcard-tag">Tajná mise ${m.number}</span>
+          <span class="mcard-points">${m.points} bodů</span>
         </div>
-        <h3 class="mcard-title">${escapeHtml(m.title)}</h3>
-        <p class="mcard-intro">${escapeHtml(m.intro)}</p>
-        <div class="mcard-label">Podmínky splnění</div>
-        <ul class="mcard-conds">${conds}</ul>
-        ${warn}
-      </div>`;
+        <div class="mcard-body">
+          <h3 class="mcard-title">${escapeHtml(m.title)}</h3>
+          <p class="mcard-intro">${escapeHtml(m.intro)}</p>
+          <div class="mcard-label">Podmínky splnění</div>
+          <ul class="mcard-conds">${conds}</ul>
+          ${warn}
+        </div>
+        <div class="mcard-foot">
+          <span class="mcard-badge ${done ? 'ok' : 'active'}">${done ? 'Splněno' : 'Aktivní'}</span>
+        </div>
+        ${done ? '<span class="mcard-stamp">Splněno</span>' : ''}
+      </article>`;
     })
     .join('');
 
