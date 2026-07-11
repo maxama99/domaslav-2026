@@ -30,54 +30,98 @@
     </div>
 
     <div id="panel" class="hidden">
-      <!-- Nastavení akce -->
-      <div class="card">
-        <h2>Nastavení akce</h2>
-        <label for="event_title">Název akce</label>
-        <input type="text" id="event_title" />
-        <div style="height:0.8rem"></div>
-        <label>Názvy disciplín pětiboje</label>
-        <div class="grid" id="disciplines-grid"></div>
-        <div style="height:0.8rem"></div>
-        <label for="tiebreak_correct">Správná odpověď rozstřelové otázky (číslo)</label>
-        <input type="number" step="any" id="tiebreak_correct" style="width:12rem" />
-        <div style="height:0.9rem"></div>
-        <button id="save-settings">Uložit nastavení</button>
-      </div>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" type="button" data-tab="body">🎯 Body</button>
+        <button class="tab" type="button" data-tab="tymy">👥 Týmy</button>
+        <button class="tab" type="button" data-tab="nastaveni">⚙️ Nastavení</button>
+        <button class="tab" type="button" data-tab="mise">🕵️ Mise</button>
+      </nav>
 
-      <!-- Přidat tým -->
-      <div class="card">
-        <h2>Přidat tým</h2>
-        <div class="row">
-          <div style="flex:1;min-width:12rem">
-            <label for="new-team">Název týmu</label>
-            <input type="text" id="new-team" placeholder="např. Zlaté ledvinky" />
-          </div>
-          <div style="flex:1;min-width:12rem">
-            <label for="new-secret">Tajné slovo (pro vstup týmu)</label>
-            <input type="text" id="new-secret" placeholder="např. zlata-slepice" />
-          </div>
-          <button id="add-team">Přidat</button>
+      <!-- ZÁLOŽKA: BODY -->
+      <section class="tab-panel" data-panel="body">
+        <div class="card">
+          <h2>🏆 Průběžné pořadí</h2>
+          <div id="standings"></div>
         </div>
-        <p class="hint" style="text-align:left;margin-bottom:0">
-          Tým se tímto slovem přihlásí na <a href="/tym">/tym</a> a vylosují se mu 2 tajné mise.
-        </p>
-      </div>
 
-      <!-- Týmy a body -->
-      <div class="card">
-        <h2>Týmy a body</h2>
-        <div id="teams"></div>
-      </div>
+        <div class="card">
+          <h2>🍺 Hospodský pětiboj</h2>
+          <p class="hint" style="text-align:left;margin-top:0">
+            Po každé disciplíně přiřaď týmům body podle umístění (3 / 2 / 1 / 0).
+          </p>
+          <div id="pentathlon"></div>
+        </div>
 
-      <!-- Katalog všech tajných misí -->
-      <div class="card">
-        <h2>🕵️ Všechny tajné mise <span class="pill" id="catalog-count"></span></h2>
-        <details class="rules-details spoiler">
-          <summary>⚠️ Zobrazit obsah všech misí (spoilery)</summary>
-          <div id="catalog"></div>
-        </details>
-      </div>
+        <div class="card">
+          <h2>🧠 Pub kvíz</h2>
+          <p class="hint" style="text-align:left;margin-top:0">
+            Body podle umístění v kvízu; rozstřel je číselný odhad pro případ shody.
+          </p>
+          <div id="quiz"></div>
+        </div>
+
+        <div class="card">
+          <h2>🕵️ Tajné mise</h2>
+          <p class="hint" style="text-align:left;margin-top:0">
+            Potvrď splněné mise; každá = 5 bodů.
+          </p>
+          <div id="missions-scoring"></div>
+        </div>
+      </section>
+
+      <!-- ZÁLOŽKA: TÝMY -->
+      <section class="tab-panel hidden" data-panel="tymy">
+        <div class="card">
+          <h2>Přidat tým</h2>
+          <div class="row">
+            <div style="flex:1;min-width:12rem">
+              <label for="new-team">Název týmu</label>
+              <input type="text" id="new-team" placeholder="např. Zlaté ledvinky" />
+            </div>
+            <div style="flex:1;min-width:12rem">
+              <label for="new-secret">Tajné slovo (pro vstup týmu)</label>
+              <input type="text" id="new-secret" placeholder="např. zlata-slepice" />
+            </div>
+            <button id="add-team">Přidat</button>
+          </div>
+          <p class="hint" style="text-align:left;margin-bottom:0">
+            Tým se tímto slovem přihlásí na <a href="/tym">/tym</a> a vylosují se mu 2 tajné mise.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>Týmy</h2>
+          <div id="teams-manage"></div>
+        </div>
+      </section>
+
+      <!-- ZÁLOŽKA: NASTAVENÍ -->
+      <section class="tab-panel hidden" data-panel="nastaveni">
+        <div class="card">
+          <h2>Nastavení akce</h2>
+          <label for="event_title">Název akce</label>
+          <input type="text" id="event_title" />
+          <div style="height:0.8rem"></div>
+          <label>Názvy disciplín pětiboje</label>
+          <div class="grid" id="disciplines-grid"></div>
+          <div style="height:0.8rem"></div>
+          <label for="tiebreak_correct">Správná odpověď rozstřelové otázky (číslo)</label>
+          <input type="number" step="any" id="tiebreak_correct" style="width:12rem" />
+          <div style="height:0.9rem"></div>
+          <button id="save-settings">Uložit nastavení</button>
+        </div>
+      </section>
+
+      <!-- ZÁLOŽKA: MISE -->
+      <section class="tab-panel hidden" data-panel="mise">
+        <div class="card">
+          <h2>🕵️ Všechny tajné mise <span class="pill" id="catalog-count"></span></h2>
+          <details class="rules-details spoiler">
+            <summary>⚠️ Zobrazit obsah všech misí (spoilery)</summary>
+            <div id="catalog"></div>
+          </details>
+        </div>
+      </section>
     </div>
   </main>
 

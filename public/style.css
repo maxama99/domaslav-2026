@@ -599,3 +599,95 @@ button.danger { background: #b3413a; color: #fff; }
 .cat-intro { margin: 0.2rem 0 0.4rem; line-height: 1.45; }
 .cat-conds { margin: 0 0 0.4rem; padding-left: 1.2rem; line-height: 1.4; color: var(--muted); }
 .cat-conds li { margin-bottom: 0.15rem; }
+
+/* ---- Admin: záložky ---- */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 0.5rem 0;
+  background: linear-gradient(var(--bg), var(--bg) 70%, transparent);
+}
+.tab {
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--gold); color: #1a1a1a; border-color: var(--gold); }
+
+/* ---- Admin: průběžné pořadí ---- */
+.mini-table { width: 100%; border-collapse: collapse; }
+.mini-table th, .mini-table td {
+  padding: 0.5rem 0.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mini-table th { color: var(--muted); font-size: 0.82rem; font-weight: 600; }
+.mini-table th:nth-child(2), .mini-table td.mt-team { text-align: left; }
+.mini-table td { border-top: 1px solid var(--line); }
+.mini-table td.mt-team { font-weight: 600; }
+.mini-table td.mt-total { color: var(--gold); font-weight: 700; }
+
+/* ---- Admin: zadávání bodů po řádcích ---- */
+.disc-score {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.9rem;
+  background: var(--panel-2);
+}
+.disc-score-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.35rem 0;
+  flex-wrap: wrap;
+}
+.score-row + .score-row { border-top: 1px solid var(--line); }
+.score-team-name {
+  flex: 1;
+  min-width: 7rem;
+  font-weight: 600;
+}
+.quiz-row { padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+.quiz-row:last-child { border-bottom: none; }
+.tiebreak-input { width: 6.5rem; }
+
+.score-team-block {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.8rem;
+  background: var(--panel-2);
+}
+.score-team-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+/* ---- Admin: správa týmů ---- */
+.team-manage {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.9rem;
+  background: var(--panel-2);
+}
