@@ -134,7 +134,8 @@ function renderTeams() {
         (sum, d) => sum + (t.discipline_points[d.id] || 0),
         0,
       );
-      const total = pentTotal + t.missions_done * 5 + t.quiz_points;
+      const missionPts = t.missions_done * 5;
+      const total = pentTotal + missionPts + t.quiz_points;
       const discSegs = STATE.disciplines
         .map(
           (d) => `<div class="seg-field">
@@ -147,27 +148,40 @@ function renderTeams() {
       return `<div class="team-block">
         <div class="team-head">
           <strong>${escapeHtml(t.name)}</strong>
-          <span><span class="pill">${total} b</span>
+          <span><span class="pill">${total} / 45 b</span>
             <button class="danger" data-del="${t.id}">Smazat</button></span>
         </div>
 
-        <label style="margin-top:0.8rem">🍺 Pětiboj — body za disciplínu</label>
-        <div class="disc-segs">${discSegs}</div>
-
-        <div class="seg-field" style="margin-top:0.9rem">
-          <label>🕵️ Tajné mise — splněné (body)</label>
-          ${segGroup('missions', t.id, t.missions_done, MISSION_OPTS)}
+        <div class="team-section">
+          <div class="section-head">
+            <span>🍺 Hospodský pětiboj</span><span class="subscore">${pentTotal} / 15 b</span>
+          </div>
+          <div class="disc-segs">${discSegs}</div>
         </div>
 
-        <div class="seg-field" style="margin-top:0.9rem">
-          <label>🧠 Pub kvíz — umístění (body)</label>
-          ${segGroup('quiz', t.id, t.quiz_points, QUIZ_OPTS)}
+        <div class="team-section">
+          <div class="section-head">
+            <span>🕵️ Tajné mise</span><span class="subscore">${missionPts} / 15 b</span>
+          </div>
+          <div class="seg-field">
+            <label>Splněné mise (body)</label>
+            ${segGroup('missions', t.id, t.missions_done, MISSION_OPTS)}
+          </div>
         </div>
 
-        <div class="seg-field" style="margin-top:0.9rem">
-          <label>🎯 Rozstřel (číselný odhad)</label>
-          <input type="number" step="any" data-team="${t.id}" data-tiebreak
-                 value="${t.tiebreak_guess ?? ''}" style="width:8rem" />
+        <div class="team-section">
+          <div class="section-head">
+            <span>🧠 Pub kvíz</span><span class="subscore">${t.quiz_points} / 15 b</span>
+          </div>
+          <div class="seg-field">
+            <label>Umístění (body)</label>
+            ${segGroup('quiz', t.id, t.quiz_points, QUIZ_OPTS)}
+          </div>
+          <div class="seg-field" style="margin-top:0.7rem">
+            <label>🎯 Rozstřel (číselný odhad)</label>
+            <input type="number" step="any" data-team="${t.id}" data-tiebreak
+                   value="${t.tiebreak_guess ?? ''}" style="width:8rem" />
+          </div>
         </div>
       </div>`;
     })

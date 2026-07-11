@@ -214,6 +214,26 @@ input[type="text"], input[type="number"], input[type="password"] {
 .seg-field { margin-bottom: 0.3rem; }
 .seg-field label { margin-bottom: 0.3rem; }
 
+.team-section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin-top: 0.8rem;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.section-head .subscore {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
 .disc-segs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
