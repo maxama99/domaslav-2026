@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pravidla — Hospodská olympiáda</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>" />
+</head>
+<body>
+  <header class="hero">
+    <div class="rings">🥇🍺🥈🍻🥉</div>
+    <h1 id="title">Pravidla &amp; postup</h1>
+    <p class="subtitle">Hospodská olympiáda</p>
+    <nav class="topnav"><a href="/">🏆 Zpět na žebříček</a></nav>
+  </header>
+
+  <main class="admin-wrap">
+    <!-- Bodování -->
+    <div class="card">
+      <h2>🎯 Bodování</h2>
+      <p>Olympiáda se skládá ze tří částí. Každý tým může získat celkem nejvýše
+        <strong>45 bodů</strong>.</p>
+      <div class="rules-parts">
+        <div class="part"><span class="pill">max 15 b</span><strong>Hospodský pětiboj</strong></div>
+        <div class="part"><span class="pill">max 15 b</span><strong>Tajné mise</strong></div>
+        <div class="part"><span class="pill">max 15 b</span><strong>Večerní pub kvíz</strong></div>
+      </div>
+      <p class="hint" style="text-align:left">Při shodném celkovém výsledku rozhodne
+        rozstřelová otázka z pub kvízu s číselnou odpovědí — vítězí tým, jehož odhad je
+        nejblíže správnému výsledku.</p>
+    </div>
+
+    <!-- Postup -->
+    <div class="card">
+      <h2>🗺️ Průběh akce</h2>
+      <ol class="steps">
+        <li>Na začátku si každý tým <strong>vylosuje dvě kartičky s tajnými misemi</strong>.</li>
+        <li>Během celé akce probíhá <strong>hospodský pětiboj</strong> (pět disciplín) a týmy
+          průběžně plní své tajné mise.</li>
+        <li>Jakmile tým splní alespoň jednu ze svých misí, může si vylosovat
+          <strong>třetí, poslední kartičku</strong>.</li>
+        <li>Večer se koná <strong>pub kvíz</strong> o 15 otázek plus rozstřelová otázka.</li>
+        <li>Sečtou se body ze všech tří částí a vyhlásí se <strong>vítěz</strong> 🏆.</li>
+      </ol>
+    </div>
+
+    <!-- Pětiboj -->
+    <div class="card">
+      <h2>🍺 Hospodský pětiboj <span class="pill">max 15 b</span></h2>
+      <p>Pět disciplín, každá se hodnotí samostatně podle umístění:</p>
+      <ul class="placing">
+        <li><span class="place">1. místo</span> <strong>3 body</strong></li>
+        <li><span class="place">2. místo</span> <strong>2 body</strong></li>
+        <li><span class="place">3. místo</span> <strong>1 bod</strong></li>
+        <li><span class="place">4. místo</span> <strong>0 bodů</strong></li>
+      </ul>
+      <p>Vítěz všech pěti disciplín tak získá maximálně 15 bodů.</p>
+      <h3 class="sub">Disciplíny</h3>
+      <ol class="disciplines" id="disciplines"><li class="empty">Načítám…</li></ol>
+    </div>
+
+    <!-- Tajné mise -->
+    <div class="card">
+      <h2>🕵️ Tajné mise <span class="pill">max 15 b</span></h2>
+      <p>Za každou úspěšně splněnou misi získá tým <strong>5 bodů</strong>. Každý tým může
+        získat nejvýše tři kartičky a splnit maximálně tři mise:</p>
+      <ul class="placing">
+        <li><span class="place">1 mise</span> <strong>5 bodů</strong></li>
+        <li><span class="place">2 mise</span> <strong>10 bodů</strong></li>
+        <li><span class="place">3 mise</span> <strong>15 bodů</strong></li>
+      </ul>
+      <p class="hint" style="text-align:left">Nesplněnou kartičku nelze vyměnit ani odložit.
+        Splnění mise musí potvrdit organizátor, nezávislý svědek, fotografie nebo video.
+        Obsah mise se nesmí před dokončením prozradit lidem, kteří jsou její součástí
+        (vlastnímu týmu ano).</p>
+    </div>
+
+    <!-- Pub kvíz -->
+    <div class="card">
+      <h2>🧠 Večerní pub kvíz <span class="pill">max 15 b</span></h2>
+      <p>Celkem <strong>15 bodovaných otázek nebo úkolů</strong>, za každou správnou odpověď
+        <strong>1 bod</strong>.</p>
+      <p class="hint" style="text-align:left">Součástí kvízu je rozstřelová otázka s číselnou
+        odpovědí. Použije se jen při celkové shodě — vítězí nejbližší odhad.</p>
+    </div>
+  </main>
+
+  <footer>
+    <a href="/">Žebříček</a> · <a href="/admin">Admin</a>
+  </footer>
+
+  <script src="/pravidla.js"></script>
+</body>
+</html>
