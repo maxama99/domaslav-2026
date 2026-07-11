@@ -19,7 +19,7 @@ const MISSION_OPTS = [
 ];
 // Kvíz: value = body dle umístění.
 const QUIZ_OPTS = [
-  { value: 0, label: '—' },
+  { value: 0, label: '-' },
   { value: 15, label: '1. (15 b)' },
   { value: 10, label: '2. (10 b)' },
   { value: 5, label: '3. (5 b)' },
@@ -212,7 +212,7 @@ function renderTeams() {
     });
   });
 
-  // Rozstřel — uloží se spolu s aktuálním kvízovým skóre.
+  // Rozstřel - uloží se spolu s aktuálním kvízovým skóre.
   $('teams').querySelectorAll('input[data-tiebreak]').forEach((inp) => {
     inp.addEventListener('change', async () => {
       const team = inp.dataset.team;

@@ -1,7 +1,7 @@
 {
   "name": "hospodska-olympiada",
   "version": "1.0.0",
-  "description": "Web na hospodskou olympiádu — žebříček + admin (Cloudflare Workers + D1)",
+  "description": "Web na hospodskou olympiádu - žebříček + admin (Cloudflare Workers + D1)",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,4 +1,4 @@
-# Taskfile pro Hospodskou olympiádu — `task <příkaz>`
+# Taskfile pro Hospodskou olympiádu - `task <příkaz>`
 # Nainstaluj go-task: https://taskfile.dev  (na většině systémů `brew install go-task` / `apt install task`)
 version: "3"
 

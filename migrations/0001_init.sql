@@ -1,4 +1,4 @@
--- Hospodská olympiáda — schéma D1 (SQLite)
+-- Hospodská olympiáda - schéma D1 (SQLite)
 
 CREATE TABLE IF NOT EXISTS teams (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,

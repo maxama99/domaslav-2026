@@ -1,25 +1,25 @@
-# 🍺 Hospodská olympiáda
+# 🍺 Domaslavská olympiáda 2026
 
-Malá webovka na akci „hospodská olympiáda" — živý žebříček týmů (hospodský pětiboj,
+Malá webovka na akci „hospodská olympiáda" - živý žebříček týmů (hospodský pětiboj,
 tajné mise, pub kvíz) a heslem chráněný admin na zadávání bodů.
 
 Postavené na **Cloudflare Workers + D1** (SQLite na edge, zdarma). Doména: **olympiada.mmaxa.cz**.
 
 ## Bodování
 
-| Část | Max | Jak |
-|------|-----|-----|
-| Hospodský pětiboj | 15 | 5 disciplín, umístění 1./2./3./4. = 3/2/1/0 b |
-| Tajné mise | 15 | 0–3 splněné mise × 5 b |
-| Pub kvíz | 15 | 0–15 b (1 b/otázka) |
-| **Celkem** | **45** | při shodě rozhoduje rozstřelová otázka (nejbližší číselný odhad) |
+| Část              | Max    | Jak                                                              |
+| ----------------- | ------ | ---------------------------------------------------------------- |
+| Hospodský pětiboj | 15     | 5 disciplín, umístění 1./2./3./4. = 3/2/1/0 b                    |
+| Tajné mise        | 15     | 0–3 splněné mise × 5 b                                           |
+| Pub kvíz          | 15     | 0–15 b (1 b/otázka)                                              |
+| **Celkem**        | **45** | při shodě rozhoduje rozstřelová otázka (nejbližší číselný odhad) |
 
 ## Struktura
 
-- `src/index.ts` — Worker (Hono): veřejné `/api/leaderboard` + chráněné `/api/admin/*`.
-- `public/` — `index.html` (žebříček), `admin.html` (zadávání), styly a JS.
-- `migrations/` — SQL schéma D1.
-- `.github/workflows/deploy.yml` — auto-deploy při pushi do `main`.
+- `src/index.ts` - Worker (Hono): veřejné `/api/leaderboard` + chráněné `/api/admin/*`.
+- `public/` - `index.html` (žebříček), `admin.html` (zadávání), styly a JS.
+- `migrations/` - SQL schéma D1.
+- `.github/workflows/deploy.yml` - auto-deploy při pushi do `main`.
 
 ## Jednorázové nastavení
 
@@ -44,8 +44,8 @@ npm run deploy
 
 V GitHubu → **Settings → Secrets and variables → Actions** přidej:
 
-- `CLOUDFLARE_API_TOKEN` — token s oprávněním *Edit Workers* + *D1 edit* (Account → API Tokens).
-- `CLOUDFLARE_ACCOUNT_ID` — ID účtu (v Cloudflare dashboardu).
+- `CLOUDFLARE_API_TOKEN` - token s oprávněním _Edit Workers_ + _D1 edit_ (Account → API Tokens).
+- `CLOUDFLARE_ACCOUNT_ID` - ID účtu (v Cloudflare dashboardu).
 
 Poté každý `git push` do `main` spustí migrace i deploy.
 
@@ -67,4 +67,4 @@ ADMIN_PASSWORD=tajneheslo
 
 1. V adminu pojmenuj akci a 5 disciplín pětiboje, zadej správnou odpověď rozstřelu.
 2. Přidej týmy.
-3. Průběžně zadávej body — žebříček na `/` se sám obnovuje každých 5 s.
+3. Průběžně zadávej body - žebříček na `/` se sám obnovuje každých 5 s.
