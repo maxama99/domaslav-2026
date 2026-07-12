@@ -65,9 +65,11 @@ app.get('/api/leaderboard', async (c) => {
 
   const teams = await db
     .prepare(
-      `SELECT t.id, t.name, t.members, t.tiebreak_guess,
+      `SELECT t.id, t.name, t.members, t.tiebreak_guess, t.adjustment,
               (SELECT COUNT(*) FROM team_missions tm
-                 WHERE tm.team_id = t.id AND tm.status = 'completed') AS missions_done,
+                 WHERE tm.team_id = t.id AND tm.status = 'completed') AS missions_full,
+              (SELECT COUNT(*) FROM team_missions tm
+                 WHERE tm.team_id = t.id AND tm.status = 'partial') AS missions_partial,
               COALESCE(s.quiz_points, 0)   AS quiz_points,
               COALESCE(SUM(td.points), 0)  AS pentathlon
        FROM teams t
@@ -80,14 +82,18 @@ app.get('/api/leaderboard', async (c) => {
       name: string;
       members: string | null;
       tiebreak_guess: number | null;
-      missions_done: number;
+      adjustment: number;
+      missions_full: number;
+      missions_partial: number;
       quiz_points: number;
       pentathlon: number;
     }>();
 
   const rows = (teams.results ?? []).map((t) => {
-    const missions = t.missions_done * MISSION_POINTS;
-    const total = t.pentathlon + missions + t.quiz_points;
+    const missions =
+      t.missions_full * MISSION_POINTS + t.missions_partial * (MISSION_POINTS / 2);
+    const adjustment = t.adjustment ?? 0;
+    const total = t.pentathlon + missions + t.quiz_points + adjustment;
     const tiebreakDiff =
       correct != null && t.tiebreak_guess != null
         ? Math.abs(t.tiebreak_guess - correct)
@@ -101,8 +107,10 @@ app.get('/api/leaderboard', async (c) => {
         .filter(Boolean),
       pentathlon: t.pentathlon,
       missions,
-      missionsDone: t.missions_done,
+      missionsDone: t.missions_full,
+      missionsPartial: t.missions_partial,
       quiz: t.quiz_points,
+      adjustment,
       total,
       tiebreakGuess: t.tiebreak_guess,
       tiebreakDiff,
@@ -156,7 +164,7 @@ app.get('/api/admin/state', async (c) => {
 
   const teams = await db
     .prepare(
-      `SELECT t.id, t.name, t.members, t.secret_word, t.tiebreak_guess,
+      `SELECT t.id, t.name, t.members, t.secret_word, t.tiebreak_guess, t.adjustment,
               COALESCE(s.quiz_points, 0) AS quiz_points
        FROM teams t
        LEFT JOIN team_scores s ON s.team_id = t.id
@@ -168,6 +176,7 @@ app.get('/api/admin/state', async (c) => {
       members: string | null;
       secret_word: string | null;
       tiebreak_guess: number | null;
+      adjustment: number;
       quiz_points: number;
     }>();
 
@@ -243,11 +252,15 @@ app.get('/api/admin/state', async (c) => {
     allMissions,
     teams: (teams.results ?? []).map((t) => {
       const missions = missionsByTeam[t.id] ?? [];
+      const full = missions.filter((m) => m.status === 'completed').length;
+      const partial = missions.filter((m) => m.status === 'partial').length;
       return {
         ...t,
         discipline_points: discByTeam[t.id] ?? {},
         missions,
-        missions_done: missions.filter((m) => m.status === 'completed').length,
+        missions_done: full,
+        missions_partial: partial,
+        mission_points: full * MISSION_POINTS + partial * (MISSION_POINTS / 2),
       };
     }),
   });
@@ -333,18 +346,39 @@ app.put('/api/admin/teams/:id/members', async (c) => {
   return c.json({ ok: true });
 });
 
-// Potvrzení / vrácení splnění mise: { status: 'completed' | 'active' }
+// Ruční úprava bodů (absolutní hodnota, může být záporná): { adjustment }
+app.put('/api/admin/teams/:id/adjustment', async (c) => {
+  const teamId = Number(c.req.param('id'));
+  const body = await c.req
+    .json<{ adjustment?: number }>()
+    .catch(() => ({}) as { adjustment?: number });
+  const n = Number(body.adjustment);
+  const adjustment = Number.isFinite(n) ? n : 0;
+
+  await c.env.DB.prepare('UPDATE teams SET adjustment = ? WHERE id = ?')
+    .bind(adjustment, teamId)
+    .run();
+
+  return c.json({ ok: true, adjustment });
+});
+
+// Stav mise: { status: 'completed' | 'partial' | 'active' }
 app.put('/api/admin/teams/:id/missions/:missionId', async (c) => {
   const teamId = Number(c.req.param('id'));
   const missionId = Number(c.req.param('missionId'));
   const body = await c.req
     .json<{ status?: string }>()
     .catch(() => ({}) as { status?: string });
-  const status = body.status === 'completed' ? 'completed' : 'active';
-  const completedAt = status === 'completed' ? "datetime('now')" : 'NULL';
+  const status =
+    body.status === 'completed'
+      ? 'completed'
+      : body.status === 'partial'
+        ? 'partial'
+        : 'active';
+  const resolvedAt = status === 'active' ? 'NULL' : "datetime('now')";
 
   await c.env.DB.prepare(
-    `UPDATE team_missions SET status = ?, completed_at = ${completedAt}
+    `UPDATE team_missions SET status = ?, completed_at = ${resolvedAt}
      WHERE team_id = ? AND mission_id = ?`,
   )
     .bind(status, teamId, missionId)
@@ -467,7 +501,10 @@ async function teamState(db: D1Database, teamId: number, name: string) {
   }));
 
   const completed = missions.filter((m) => m.status === 'completed').length;
+  const partial = missions.filter((m) => m.status === 'partial').length;
+  const resolved = completed + partial;
   const drawn = missions.length;
+  const points = completed * MISSION_POINTS + partial * (MISSION_POINTS / 2);
   const deck = await db
     .prepare(
       `SELECT COUNT(*) AS n FROM missions
@@ -481,8 +518,10 @@ async function teamState(db: D1Database, teamId: number, name: string) {
     missions,
     drawn,
     completed,
+    partial,
+    points,
     deckLeft,
-    canDraw: completed >= 1 && drawn < MAX_MISSIONS && deckLeft > 0,
+    canDraw: resolved >= 1 && drawn < MAX_MISSIONS && deckLeft > 0,
   };
 }
 
@@ -517,8 +556,8 @@ app.post('/api/team/draw', async (c) => {
   const state = await teamState(c.env.DB, teamId, name);
   if (!state.canDraw) {
     const reason =
-      state.completed < 1
-        ? 'Nejdřív musíš mít potvrzenou aspoň jednu splněnou misi.'
+      state.completed + state.partial < 1
+        ? 'Nejdřív musíš mít potvrzenou aspoň jednu (i částečně) splněnou misi.'
         : state.drawn >= MAX_MISSIONS
           ? 'Už máš maximální počet karet.'
           : 'V balíčku už nezbývá žádná volná mise.';

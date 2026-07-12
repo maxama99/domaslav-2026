@@ -78,15 +78,19 @@ async function refresh() {
   render(data);
 }
 
+function fmt(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.', ',');
+}
+
 function render(data) {
   $('team-name').textContent = data.name;
-  $('mission-score').textContent = `${data.completed * 5} / 15 b`;
+  $('mission-score').textContent = `${fmt(data.points)} / 15 b`;
 
   // Přehled průběhu (3 sloty)
+  const resolved = data.completed + data.partial;
   const slots = [0, 1, 2]
     .map((i) => {
-      const cls =
-        i < data.completed ? 'done' : i < data.drawn ? 'filled' : '';
+      const cls = i < resolved ? 'done' : i < data.drawn ? 'filled' : '';
       return `<span class="mission-slot ${cls}"></span>`;
     })
     .join('');
@@ -95,6 +99,8 @@ function render(data) {
   $('missions').innerHTML = data.missions
     .map((m) => {
       const done = m.status === 'completed';
+      const partial = m.status === 'partial';
+      const resolvedCard = done || partial;
       const conds = m.conditions
         .map(
           (c) =>
@@ -104,7 +110,17 @@ function render(data) {
       const warn = m.warning
         ? `<div class="mcard-warn"><span class="warn-ico">!</span><span><strong>Pozor:</strong> ${escapeHtml(m.warning)}</span></div>`
         : '';
-      return `<article class="mcard${done ? ' completed' : ''}">
+      const badge = done
+        ? '<span class="mcard-badge ok">Splněno</span>'
+        : partial
+          ? '<span class="mcard-badge partial">Částečně splněno</span>'
+          : '<span class="mcard-badge active">Aktivní</span>';
+      const stamp = done
+        ? '<span class="mcard-stamp">Splněno</span>'
+        : partial
+          ? '<span class="mcard-stamp partial">Částečně</span>'
+          : '';
+      return `<article class="mcard${resolvedCard ? ' completed' : ''}">
         <div class="mcard-top">
           <span class="mcard-tag">Tajná mise ${m.number}</span>
           <span class="mcard-points">${m.points} bodů</span>
@@ -116,10 +132,8 @@ function render(data) {
           <ul class="mcard-conds">${conds}</ul>
           ${warn}
         </div>
-        <div class="mcard-foot">
-          <span class="mcard-badge ${done ? 'ok' : 'active'}">${done ? 'Splněno' : 'Aktivní'}</span>
-        </div>
-        ${done ? '<span class="mcard-stamp">Splněno</span>' : ''}
+        <div class="mcard-foot">${badge}</div>
+        ${stamp}
       </article>`;
     })
     .join('');
@@ -130,8 +144,8 @@ function render(data) {
   btn.disabled = !data.canDraw;
   if (data.drawn >= 3) {
     hint.textContent = 'Máš už všechny tři karty.';
-  } else if (data.completed < 1) {
-    hint.textContent = 'Odemkne se po potvrzení první splněné mise.';
+  } else if (data.completed + data.partial < 1) {
+    hint.textContent = 'Odemkne se po potvrzení první (i částečně) splněné mise.';
   } else if (data.deckLeft < 1) {
     hint.textContent = 'V balíčku už není žádná volná mise.';
   } else {

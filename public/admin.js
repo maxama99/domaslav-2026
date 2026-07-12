@@ -28,6 +28,27 @@ function segGroup(kind, teamId, current, options, extra = '') {
   return `<div class="seg" data-kind="${kind}" data-team="${teamId}" ${extra}>${buttons}</div>`;
 }
 
+// Stavový přepínač mise: nesplněno / částečně (½) / splněno.
+function statusGroup(teamId, missionId, status) {
+  const opts = [
+    { v: 'active', label: '–' },
+    { v: 'partial', label: '½ · 2,5 b' },
+    { v: 'completed', label: '✓ · 5 b' },
+  ];
+  const buttons = opts
+    .map(
+      (o) =>
+        `<button type="button" class="seg-btn${o.v === status ? ' active' : ''}" data-status="${o.v}">${o.label}</button>`,
+    )
+    .join('');
+  return `<div class="seg" data-kind="mstatus" data-team="${teamId}" data-mission="${missionId}">${buttons}</div>`;
+}
+
+// Formátování bodů (celé číslo bez desetin, jinak s čárkou: 2,5).
+function fmt(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.', ',');
+}
+
 function toast(msg) {
   const el = $('toast');
   el.textContent = msg;
@@ -106,6 +127,7 @@ async function refresh() {
   renderPentathlon();
   renderQuiz();
   renderMissionsScoring();
+  renderAdjustments();
   renderTeamsManage();
   renderCatalog();
 }
@@ -115,8 +137,15 @@ function teamTotals(t) {
     (s, d) => s + (t.discipline_points[d.id] || 0),
     0,
   );
-  const missions = t.missions_done * 5;
-  return { pent, missions, quiz: t.quiz_points, total: pent + missions + t.quiz_points };
+  const missions = t.mission_points || 0;
+  const adjustment = t.adjustment || 0;
+  return {
+    pent,
+    missions,
+    quiz: t.quiz_points,
+    adjustment,
+    total: pent + missions + t.quiz_points + adjustment,
+  };
 }
 
 const noTeams = '<p class="hint" style="text-align:left">Nejdřív přidej týmy v záložce Týmy.</p>';
@@ -170,14 +199,16 @@ function renderStandings() {
     .sort((a, b) => b.total - a.total);
   $('standings').innerHTML = `<table class="mini-table">
     <thead><tr><th>#</th><th>Tým</th><th title="Pětiboj">🍺</th>
-      <th title="Mise">🕵️</th><th title="Kvíz">🧠</th><th>Σ</th></tr></thead>
+      <th title="Mise">🕵️</th><th title="Kvíz">🧠</th>
+      <th title="Ruční úprava">±</th><th>Σ</th></tr></thead>
     <tbody>${rows
       .map(
         (r, i) => `<tr>
           <td>${i + 1}</td>
           <td class="mt-team">${escapeHtml(r.t.name)}</td>
-          <td>${r.pent}</td><td>${r.missions}</td><td>${r.quiz}</td>
-          <td class="mt-total">${r.total}</td>
+          <td>${fmt(r.pent)}</td><td>${fmt(r.missions)}</td><td>${fmt(r.quiz)}</td>
+          <td class="mt-adj">${r.adjustment ? (r.adjustment > 0 ? '+' : '') + fmt(r.adjustment) : ''}</td>
+          <td class="mt-total">${fmt(r.total)}</td>
         </tr>`,
       )
       .join('')}</tbody></table>`;
@@ -232,27 +263,45 @@ function renderMissionsScoring() {
   }
   $('missions-scoring').innerHTML = STATE.teams
     .map((t) => {
-      const missionPts = t.missions_done * 5;
       const list = (t.missions || []).length
         ? (t.missions || [])
-            .map((m) => {
-              const done = m.status === 'completed';
-              return `<div class="admin-mission${done ? ' done' : ''}">
-                <span><span class="m-num">#${m.number}</span><span class="m-title">${escapeHtml(m.title)}</span></span>
-                <button class="${done ? 'ghost' : ''}" data-mission-team="${t.id}"
-                        data-mission="${m.mission_id}" data-next="${done ? 'active' : 'completed'}">
-                  ${done ? '↩ Vrátit' : '✓ Splněno'}
-                </button>
-              </div>`;
-            })
+            .map(
+              (m) => `<div class="admin-mission-row">
+                <span class="m-label"><span class="m-num">#${m.number}</span>${escapeHtml(m.title)}</span>
+                ${statusGroup(t.id, m.mission_id, m.status)}
+              </div>`,
+            )
             .join('')
         : '<p class="hint" style="text-align:left">Žádné nalosované mise.</p>';
       return `<div class="score-team-block">
         <div class="score-team-head"><strong>${escapeHtml(t.name)}</strong>
-          <span class="subscore">${missionPts} / 15 b</span></div>
+          <span class="subscore">${fmt(t.mission_points || 0)} / 15 b</span></div>
         <div class="admin-missions">${list}</div>
       </div>`;
     })
+    .join('');
+}
+
+// --- Záložka Body: ruční úprava bodů ---
+function renderAdjustments() {
+  if (!STATE.teams.length) {
+    $('adjustments').innerHTML = noTeams;
+    return;
+  }
+  $('adjustments').innerHTML = STATE.teams
+    .map(
+      (t) => `<div class="score-row adj-row">
+        <span class="score-team-name">${escapeHtml(t.name)}</span>
+        <div class="adj-controls">
+          <button class="adj-btn" data-adj-team="${t.id}" data-adj-step="-1">−1</button>
+          <button class="adj-btn" data-adj-team="${t.id}" data-adj-step="-0.5">−½</button>
+          <input type="number" step="0.5" class="adj-input" data-adj-team="${t.id}"
+                 data-adjustment value="${t.adjustment || 0}" />
+          <button class="adj-btn" data-adj-team="${t.id}" data-adj-step="0.5">+½</button>
+          <button class="adj-btn" data-adj-team="${t.id}" data-adj-step="1">+1</button>
+        </div>
+      </div>`,
+    )
     .join('');
 }
 
@@ -285,31 +334,34 @@ document.addEventListener('click', async (e) => {
   const seg = e.target.closest('.seg-btn');
   if (seg) {
     const g = seg.closest('.seg');
+    if (!g) return;
     const team = g.dataset.team;
-    const value = Number(seg.dataset.value);
     if (g.dataset.kind === 'pent') {
       await api(`/api/admin/teams/${team}/pentathlon`, 'PUT', {
         discipline_id: Number(g.dataset.disc),
-        points: value,
+        points: Number(seg.dataset.value),
       });
     } else if (g.dataset.kind === 'quiz') {
       const tb = document.querySelector(`input[data-tiebreak][data-team="${team}"]`);
       await api(`/api/admin/teams/${team}/quiz`, 'PUT', {
-        quiz_points: value,
+        quiz_points: Number(seg.dataset.value),
         tiebreak_guess: tb && tb.value !== '' ? Number(tb.value) : null,
+      });
+    } else if (g.dataset.kind === 'mstatus') {
+      await api(`/api/admin/teams/${team}/missions/${g.dataset.mission}`, 'PUT', {
+        status: seg.dataset.status,
       });
     }
     toast('Uloženo');
     return refresh();
   }
 
-  const mBtn = e.target.closest('button[data-mission]');
-  if (mBtn) {
-    await api(
-      `/api/admin/teams/${mBtn.dataset.missionTeam}/missions/${mBtn.dataset.mission}`,
-      'PUT',
-      { status: mBtn.dataset.next },
-    );
+  const adjBtn = e.target.closest('button[data-adj-step]');
+  if (adjBtn) {
+    const team = adjBtn.dataset.adjTeam;
+    const input = document.querySelector(`input[data-adjustment][data-adj-team="${team}"]`);
+    const next = (Number(input.value) || 0) + Number(adjBtn.dataset.adjStep);
+    await api(`/api/admin/teams/${team}/adjustment`, 'PUT', { adjustment: next });
     toast('Uloženo');
     return refresh();
   }
@@ -340,6 +392,13 @@ document.addEventListener('change', async (e) => {
   if (el.matches('input[data-members]')) {
     await api(`/api/admin/teams/${el.dataset.team}/members`, 'PUT', {
       members: el.value,
+    });
+    toast('Uloženo');
+    return refresh();
+  }
+  if (el.matches('input[data-adjustment]')) {
+    await api(`/api/admin/teams/${el.dataset.adjTeam}/adjustment`, 'PUT', {
+      adjustment: Number(el.value) || 0,
     });
     toast('Uloženo');
     return refresh();

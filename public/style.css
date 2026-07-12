@@ -534,7 +534,9 @@ button.danger { background: #b3413a; color: #fff; }
 }
 .mcard-badge.active { background: rgba(244, 196, 48, 0.16); color: var(--gold); }
 .mcard-badge.ok { background: rgba(63, 174, 107, 0.18); color: var(--ok); }
+.mcard-badge.partial { background: rgba(217, 154, 25, 0.18); color: #d99a19; }
 
+.mcard-stamp.partial { background: #d99a19; }
 .mcard-stamp {
   position: absolute;
   top: 3.2rem;
@@ -710,3 +712,37 @@ button.danger { background: #b3413a; color: #fff; }
   margin-bottom: 0.9rem;
   background: var(--panel-2);
 }
+
+/* ---- Admin: řádek mise se stavovým přepínačem ---- */
+.admin-mission-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.4rem 0;
+  flex-wrap: wrap;
+}
+.admin-mission-row + .admin-mission-row { border-top: 1px solid var(--line); }
+.admin-mission-row .m-label { font-weight: 600; }
+.admin-mission-row .m-num { color: var(--muted); margin-right: 0.4rem; }
+
+/* ---- Admin: ruční úprava bodů ---- */
+.adj-row { justify-content: space-between; }
+.adj-controls { display: inline-flex; align-items: center; gap: 0.35rem; }
+.adj-btn {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 2.4rem;
+}
+.adj-btn:hover { background: var(--hover); }
+.adj-input {
+  width: 4.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+.mini-table td.mt-adj { color: var(--muted); font-size: 0.85rem; }

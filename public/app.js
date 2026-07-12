@@ -34,10 +34,10 @@ function render(data) {
         return `<tr class="${cls}">
           <td class="col-rank">${rank}</td>
           <td class="col-team">${escapeHtml(t.name)}${members}</td>
-          <td>${t.pentathlon}</td>
-          <td>${t.missions}</td>
-          <td>${t.quiz}</td>
-          <td class="col-total">${t.total}</td>
+          <td>${fmt(t.pentathlon)}</td>
+          <td>${fmt(t.missions)}</td>
+          <td>${fmt(t.quiz)}</td>
+          <td class="col-total">${fmt(t.total)}</td>
         </tr>`;
       })
       .join('');
@@ -52,6 +52,10 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]),
   );
+}
+
+function fmt(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.', ',');
 }
 
 load();
